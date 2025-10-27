@@ -40,14 +40,14 @@ vim.keymap.set("n", "<leader>td", function()
 			signs = false,
 			underline = false,
 		})
-		print("🔕 Diagnostics OFF")
+		print("Diagnostics OFF")
 	else
 		vim.diagnostic.config({
 			virtual_text = { source = "if_many", spacing = 2 },
 			signs = true,
 			underline = { severity = vim.diagnostic.severity.ERROR },
 		})
-		print("🔔 Diagnostics ON")
+		print("Diagnostics ON")
 	end
 end, { desc = "Toggle diagnostics" })
 
