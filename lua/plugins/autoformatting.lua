@@ -14,13 +14,14 @@ return {
 		-- Ensure external tools are installed (no mason-null-ls needed)
 		require("mason-tool-installer").setup({
 			ensure_installed = {
-				--"prettier",
-				"stylua",
-				"shfmt",
-				--"clang-format",
-				--"cmakelang",
-				"checkmake",
-				--"ruff",
+				"stylua", -- Lua
+				"shfmt", -- Bash
+				"isort", -- Python imports
+				"ruff", -- Python formatter & linter
+				"clang-format", -- C / C++
+				--"fprettify", -- Fortran
+				"checkmake", -- Makefiles
+				--"prettier", -- HTML, JSON, YAML, Markdown
 			},
 			auto_update = true,
 			run_on_start = true,
@@ -30,28 +31,27 @@ return {
 			sources = {
 				diagnostics.checkmake, -- Makefiles
 
-				formatting.prettier.with({ -- HTML/JSON/YAML/Markdown
+				formatting.prettier.with({
 					filetypes = { "html", "json", "yaml", "markdown" },
 				}),
 
 				formatting.stylua, -- Lua
 				formatting.shfmt.with({ extra_args = { "-i", "4" } }), -- Bash
-				--formatting.clang_format,                         -- C/C++
-				--formatting.cmake_format, -- CMake
 
-				--require("none-ls.diagnostics.ruff"), -- Python lint
-				require("none-ls.formatting.ruff").with({
-					extra_args = {
-						"--select",
-						"I",
-						"--ignore",
-						"F401,F841",
-						"--fix",
-						"true",
-					},
+				-- Python
+				require("none-ls.diagnostics.ruff"), -- Python lint
+				require("none-ls.formatting.ruff").with({ -- Python format
+					extra_args = { "--extend-select", "I" },
+				}),
+				formatting.isort, -- organize imports
+
+				-- C / C++
+				formatting.clang_format.with({
+					extra_args = { "--style=Google" }, -- or LLVM, Mozilla, WebKit, etc.
 				}),
 
-				formatting.fprettify, -- Fortran
+				-- Fortran
+				--formatting.fprettify,
 			},
 		})
 

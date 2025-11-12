@@ -188,10 +188,6 @@ vim.api.nvim_create_autocmd("FileType", {
 --	end,
 --})
 
--- Go the first and final part of a line
-vim.keymap.set("n", "1", "0", { noremap = true, silent = true })
-vim.keymap.set("n", "0", "$", { noremap = true, silent = true })
-
 -- VimTeX keymaps con <leader> (solo en buffers .tex)
 local aug = vim.api.nvim_create_augroup("vimtex_leader_keymaps", { clear = true })
 
