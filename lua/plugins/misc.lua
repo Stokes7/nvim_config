@@ -2,14 +2,14 @@
 return {
 	{
 		-- Tmux & split window navigation
-		--"christoomey/vim-tmux-navigator",
-		"mrjones2014/smart-splits.nvim",
-		lazy = false, -- <- clave: cargar siempre al inicio
-		config = function()
-			require("smart-splits").setup({
-				-- tu config opcional aquí
-			})
-		end,
+		"christoomey/vim-tmux-navigator",
+		-- "mrjones2014/smart-splits.nvim",
+		-- lazy = false, -- <- clave: cargar siempre al inicio
+		-- config = function()
+		-- 	require("smart-splits").setup({
+		-- 		-- tu config opcional aquí
+		-- 	})
+		-- end,
 	},
 	{
 		-- Detect tabstop and shiftwidth automatically

@@ -1,4 +1,11 @@
+------------------------------
+-- Leader must be defined FIRST
 -----------------------------
+-- lazy.nvim requires <leader> to be set before loading plugins
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
+----------------------------
 -- Leader Key Behavior
 -----------------------------
 -- Disable <Space> default behavior in Normal and Visual modes
@@ -80,20 +87,33 @@ vim.keymap.set(
 -----------------------------
 -- Smart-Splits Navigation
 -----------------------------
-local ok, smart_splits = pcall(require, "smart-splits")
-if ok then
-	-- Move between splits
-	vim.keymap.set("n", "<C-h>", smart_splits.move_cursor_left)
-	vim.keymap.set("n", "<C-j>", smart_splits.move_cursor_down)
-	vim.keymap.set("n", "<C-k>", smart_splits.move_cursor_up)
-	vim.keymap.set("n", "<C-l>", smart_splits.move_cursor_right)
+-- local ok, smart_splits = pcall(require, "smart-splits")
+-- if ok then
+-- 	-- Move between splits
+-- 	vim.keymap.set("n", "<C-h>", smart_splits.move_cursor_left)
+-- 	vim.keymap.set("n", "<C-j>", smart_splits.move_cursor_down)
+-- 	vim.keymap.set("n", "<C-k>", smart_splits.move_cursor_up)
+-- 	vim.keymap.set("n", "<C-l>", smart_splits.move_cursor_right)
+--
+-- 	-- Resize splits
+-- 	vim.keymap.set("n", "<A-h>", smart_splits.resize_left)
+-- 	vim.keymap.set("n", "<A-j>", smart_splits.resize_down)
+-- 	vim.keymap.set("n", "<A-k>", smart_splits.resize_up)
+-- 	vim.keymap.set("n", "<A-l>", smart_splits.resize_right)
+-- end
 
-	-- Resize splits
-	vim.keymap.set("n", "<A-h>", smart_splits.resize_left)
-	vim.keymap.set("n", "<A-j>", smart_splits.resize_down)
-	vim.keymap.set("n", "<A-k>", smart_splits.resize_up)
-	vim.keymap.set("n", "<A-l>", smart_splits.resize_right)
-end
+-----------------------------
+-- Normal Splits Navigation
+-----------------------------
+vim.keymap.set("n", "<Up>", ":resize -2<CR>", opts)
+vim.keymap.set("n", "<Down>", ":resize +2<CR>", opts)
+vim.keymap.set("n", "<Left>", ":vertical resize -2<CR>", opts)
+vim.keymap.set("n", "<Right>", ":vertical resize +2<CR>", opts)
+
+vim.keymap.set("n", "<C-k>", ":wincmd k<CR>", opts)
+vim.keymap.set("n", "<C-j>", ":wincmd j<CR>", opts)
+vim.keymap.set("n", "<C-h>", ":wincmd h<CR>", opts)
+vim.keymap.set("n", "<C-l>", ":wincmd l<CR>", opts)
 
 -----------------------------
 -- Buffer Navigation

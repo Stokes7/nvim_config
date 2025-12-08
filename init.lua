@@ -1,9 +1,12 @@
 -----------------------------
--- Leader must be defined FIRST
+-- Keymaps
 -----------------------------
--- lazy.nvim requires <leader> to be set before loading plugins
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+require("core.keymaps")
+
+-----------------------------
+-- Keymaps Checker
+-----------------------------
+require("core.keyMapsChecker")
 
 -----------------------------
 -- Core Options
@@ -74,13 +77,3 @@ require("lazy").setup({
 	-- require("plugins.nvchadui"),
 	-- require("plugins.nvchad_neotree"),
 })
-
------------------------------
--- Keymaps (must load AFTER plugins)
------------------------------
-require("core.keymaps")
-
------------------------------
--- Keymaps Checker (optional)
------------------------------
-require("core.keyMapsChecker")
