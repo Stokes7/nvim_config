@@ -39,7 +39,7 @@ return {
 				formatting.shfmt.with({ extra_args = { "-i", "4" } }), -- Bash
 
 				-- Python
-				require("none-ls.diagnostics.ruff"), -- Python lint
+				-- require("none-ls.diagnostics.ruff"), -- Python lint
 				require("none-ls.formatting.ruff").with({ -- Python format
 					extra_args = { "--extend-select", "I" },
 				}),

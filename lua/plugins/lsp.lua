@@ -206,8 +206,10 @@ return {
 			--  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
 			--  - settings (table): Override the default settings passed when initializing the server.
 			--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+
+			local cuda_home = vim.env.CUDA_HOME
+
 			local servers = {
-				-- clangd = {},
 				-- gopls = {},
 				-- pyright = {},
 				-- rust_analyzer = {},
@@ -229,6 +231,7 @@ return {
 						"--completion-style=detailed",
 						"--header-insertion=iwyu",
 						"--pch-storage=memory",
+						cuda_home and ("--cuda-path=" .. cuda_home) or nil,
 						-- If you see encoding warnings, uncomment next line:
 						-- "--offset-encoding=utf-16",
 					},
@@ -237,9 +240,17 @@ return {
 					--   client.server_capabilities.documentFormattingProvider = false
 					-- end,
 					-- Optional extra settings
+
+					filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
+
 					settings = {
 						clangd = {
-							fallbackFlags = { "-std=c++20" }, -- used when compile_commands.json is missing
+							fallbackFlags = cuda_home and {
+								"-std=c++20",
+								"-I" .. cuda_home .. "/include",
+							} or {
+								"-std=c++20",
+							},
 						},
 					},
 				},
