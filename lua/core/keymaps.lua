@@ -1,37 +1,49 @@
--- Set leader key
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-
--- Disable the spacebar key's default behavior in Normal and Visual modes
+-----------------------------
+-- Leader Key Behavior
+-----------------------------
+-- Disable <Space> default behavior in Normal and Visual modes
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 
--- For conciseness
+-----------------------------
+-- Default Mapping Options
+-----------------------------
 local opts = { noremap = true, silent = true }
 
--- save file
-vim.keymap.set("n", "<C-s>", "<cmd> w <CR>", opts)
+-----------------------------
+-- File Operations
+-----------------------------
+-- Save file
+vim.keymap.set("n", "<C-s>", "<cmd>w<CR>", opts)
 
--- save file without auto-formatting
-vim.keymap.set("n", "<leader>sn", "<cmd>noautocmd w <CR>", opts)
+-- Save file without auto-formatting
+vim.keymap.set("n", "<leader>sn", "<cmd>noautocmd w<CR>", opts)
 
--- quit file
-vim.keymap.set("n", "<C-q>", "<cmd> q <CR>", opts)
+-- Quit file
+vim.keymap.set("n", "<C-q>", "<cmd>q<CR>", opts)
 
--- lowercase x → delete character without yanking
+-----------------------------
+-- Editing Shortcuts
+-----------------------------
+-- Delete a single character without yanking
 vim.keymap.set("n", "x", '"_x', opts)
 
--- uppercase X (Shift+x) → delete whole line without yanking
+-- Delete whole line without yanking
 vim.keymap.set("n", "X", '"_dd', opts)
 
--- Vertical scroll and center
+-----------------------------
+-- Navigation Enhancements
+-----------------------------
+-- Scroll and center cursor
 vim.keymap.set("n", "<C-d>", "<C-d>zz", opts)
 vim.keymap.set("n", "<C-u>", "<C-u>zz", opts)
 
--- Find and center
+-- Find next/previous and center
 vim.keymap.set("n", "n", "nzzzv", opts)
 vim.keymap.set("n", "N", "Nzzzv", opts)
 
--- Toggle diagnostics ON/OFF
+-----------------------------
+-- Diagnostics Toggle
+-----------------------------
 vim.keymap.set("n", "<leader>td", function()
 	local config = vim.diagnostic.config()
 	if config.virtual_text or config.signs then
@@ -51,13 +63,13 @@ vim.keymap.set("n", "<leader>td", function()
 	end
 end, { desc = "Toggle diagnostics" })
 
--- Diff con el último commit (HEAD)
+-----------------------------
+-- Git Diff Shortcuts (Fugitive)
+-----------------------------
 vim.keymap.set("n", "<leader>gd", ":Gdiffsplit<CR>", { noremap = true, silent = true, desc = "Diff vs HEAD" })
 
--- Diff con el index (lo que está staged)
 vim.keymap.set("n", "<leader>gi", ":Gdiffsplit!<CR>", { noremap = true, silent = true, desc = "Diff vs INDEX" })
 
--- Diff con la rama remota principal
 vim.keymap.set(
 	"n",
 	"<leader>gr",
@@ -65,60 +77,74 @@ vim.keymap.set(
 	{ noremap = true, silent = true, desc = "Diff vs origin/main" }
 )
 
--- Resize with arrows
-vim.keymap.set("n", "<Up>", ":resize -2<CR>", opts)
-vim.keymap.set("n", "<Down>", ":resize +2<CR>", opts)
-vim.keymap.set("n", "<Left>", ":vertical resize -2<CR>", opts)
-vim.keymap.set("n", "<Right>", ":vertical resize +2<CR>", opts)
+-----------------------------
+-- Smart-Splits Navigation
+-----------------------------
+local ok, smart_splits = pcall(require, "smart-splits")
+if ok then
+	-- Move between splits
+	vim.keymap.set("n", "<C-h>", smart_splits.move_cursor_left)
+	vim.keymap.set("n", "<C-j>", smart_splits.move_cursor_down)
+	vim.keymap.set("n", "<C-k>", smart_splits.move_cursor_up)
+	vim.keymap.set("n", "<C-l>", smart_splits.move_cursor_right)
 
--- Buffers
+	-- Resize splits
+	vim.keymap.set("n", "<A-h>", smart_splits.resize_left)
+	vim.keymap.set("n", "<A-j>", smart_splits.resize_down)
+	vim.keymap.set("n", "<A-k>", smart_splits.resize_up)
+	vim.keymap.set("n", "<A-l>", smart_splits.resize_right)
+end
+
+-----------------------------
+-- Buffer Navigation
+-----------------------------
 vim.keymap.set("n", "<Tab>", ":bnext<CR>", opts)
 vim.keymap.set("n", "<S-Tab>", ":bprevious<CR>", opts)
---vim.keymap.set("n", "<leader>x", ":bdelete!<CR>", opts) -- close buffer
+
+-- Close buffer safely
 vim.keymap.set("n", "<leader>x", "<cmd>bn|bd #<CR>", { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>b", "<cmd> enew <CR>", opts) -- new buffer
 
--- Window management
-vim.keymap.set("n", "<leader>v", "<C-w>v", opts) -- split window vertically
-vim.keymap.set("n", "<leader>h", "<C-w>s", opts) -- split window horizontally
-vim.keymap.set("n", "<leader>se", "<C-w>=", opts) -- make split windows equal width & height
-vim.keymap.set("n", "<leader>xs", ":close<CR>", opts) -- close current split window
+-- New empty buffer
+vim.keymap.set("n", "<leader>b", "<cmd>enew<CR>", opts)
 
--- Navigate between splits
-vim.keymap.set("n", "<C-k>", ":wincmd k<CR>", opts)
-vim.keymap.set("n", "<C-j>", ":wincmd j<CR>", opts)
-vim.keymap.set("n", "<C-h>", ":wincmd h<CR>", opts)
-vim.keymap.set("n", "<C-l>", ":wincmd l<CR>", opts)
+-----------------------------
+-- Window Management
+-----------------------------
+vim.keymap.set("n", "<leader>v", "<C-w>v", opts) -- Vertical split
+vim.keymap.set("n", "<leader>h", "<C-w>s", opts) -- Horizontal split
+vim.keymap.set("n", "<leader>se", "<C-w>=", opts) -- Equalize splits
+vim.keymap.set("n", "<leader>xs", ":close<CR>", opts)
 
--- Tabs
-vim.keymap.set("n", "<leader>to", ":tabnew<CR>", opts) -- open new tab
-vim.keymap.set("n", "<leader>tx", ":tabclose<CR>", opts) -- close current tab
-vim.keymap.set("n", "<leader>tn", ":tabn<CR>", opts) --  go to next tab
-vim.keymap.set("n", "<leader>tp", ":tabp<CR>", opts) --  go to previous tab
+-----------------------------
+-- Tab Management
+-----------------------------
+vim.keymap.set("n", "<leader>to", ":tabnew<CR>", opts)
+vim.keymap.set("n", "<leader>tx", ":tabclose<CR>", opts)
+vim.keymap.set("n", "<leader>tn", ":tabn<CR>", opts)
+vim.keymap.set("n", "<leader>tp", ":tabp<CR>", opts)
 
--- Toggle line wrapping
-
-local opts = { noremap = true, silent = true }
-
+-----------------------------
+-- Toggle Line Wrapping
+-----------------------------
 vim.keymap.set("n", "<leader>lw", function()
 	vim.opt.wrap = not vim.opt.wrap:get()
 
 	if vim.opt.wrap:get() then
-		-- Normal mode: move by visual lines
+		-- Move by visual lines in Normal mode
 		vim.keymap.set("n", "j", "gj", opts)
 		vim.keymap.set("n", "k", "gk", opts)
 
-		-- Insert mode: arrow keys move by visual lines
+		-- Move by visual lines in Insert mode (arrows)
 		vim.keymap.set("i", "<Down>", "<C-o>gj", opts)
 		vim.keymap.set("i", "<Up>", "<C-o>gk", opts)
 
 		print("Wrap ON - visual line movement active")
 	else
-		-- Normal mode: restore default movement
+		-- Restore default movement
 		vim.keymap.set("n", "j", "j", opts)
 		vim.keymap.set("n", "k", "k", opts)
 
-		-- Insert mode: restore default arrow keys
+		-- Restore arrow keys
 		vim.keymap.set("i", "<Down>", "<Down>", opts)
 		vim.keymap.set("i", "<Up>", "<Up>", opts)
 
@@ -126,33 +152,46 @@ vim.keymap.set("n", "<leader>lw", function()
 	end
 end, opts)
 
+-----------------------------
+-- Visual Mode Improvements
+-----------------------------
 -- Stay in indent mode
 vim.keymap.set("v", "<", "<gv", opts)
 vim.keymap.set("v", ">", ">gv", opts)
 
--- Keep last yanked when pasting
+-- Keep last yanked value when pasting
 vim.keymap.set("v", "p", '"_dP', opts)
 
--- Diagnostic keymaps
+-----------------------------
+-- Diagnostic Navigation
+-----------------------------
 vim.keymap.set("n", "[d", function()
 	vim.diagnostic.jump({ count = -1, float = true })
-end, { desc = "Go to previous diagnostic message" })
+end, { desc = "Previous diagnostic" })
 
 vim.keymap.set("n", "]d", function()
 	vim.diagnostic.jump({ count = 1, float = true })
-end, { desc = "Go to next diagnostic message" })
+end, { desc = "Next diagnostic" })
 
-vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
+vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "Open diagnostic tooltip" })
+
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 
--- Toggle English spellcheck with <leader>sc for selected filetypes
-local allowed = { markdown = true, text = true, gitcommit = true, latex = true, typst = true }
+-----------------------------
+-- Spellcheck Toggle (English only)
+-----------------------------
+local allowed = {
+	markdown = true,
+	text = true,
+	gitcommit = true,
+	latex = true,
+	typst = true,
+}
 
--- Active or desactivate the spellcheck
 vim.keymap.set("n", "<leader>sc", function()
 	local ft = vim.bo.filetype
 	if not allowed[ft] then
-		print("Spellcheck not configured for filetype: " .. (ft or ""))
+		print("Spellcheck not enabled for filetype: " .. (ft or ""))
 		return
 	end
 
@@ -164,31 +203,48 @@ vim.keymap.set("n", "<leader>sc", function()
 		vim.opt_local.spelllang = { "en_us" }
 		print("Spellcheck ON (en_us)")
 	end
-end, { desc = "Toggle English spellcheck for selected filetypes" })
+end, { desc = "Toggle English spellcheck" })
 
--- Typst-only keymaps
+-----------------------------
+-- Typst Filetype Keymaps
+-----------------------------
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "typst",
 	callback = function(args)
 		local buf = args.buf
-		local opts = { noremap = true, silent = true, buffer = buf }
 
-		vim.keymap.set("n", "<leader>tp", "<cmd>TypstPreviewToggle<CR>", { desc = "Toggle Typst Preview" })
-		vim.keymap.set("n", "<leader>ts", "<cmd>TypstPreviewStop<CR>", { desc = "Stop Typst Preview" })
-		vim.keymap.set("n", "<leader>tu", "<cmd>TypstPreviewUpdate<CR>", { desc = "Update Typst Preview binaries" })
-		vim.keymap.set("n", "<leader>tf", "<cmd>TypstPreviewFollowCursorToggle<CR>", { desc = "Toggle follow cursor" })
-		vim.keymap.set("n", "<leader>ty", "<cmd>TypstPreviewSyncCursor<CR>", { desc = "Sync cursor with preview" })
+		-- Typst preview commands
+		vim.keymap.set(
+			"n",
+			"<leader>tp",
+			"<cmd>TypstPreviewToggle<CR>",
+			{ buffer = buf, desc = "Toggle Typst Preview" }
+		)
+		vim.keymap.set("n", "<leader>ts", "<cmd>TypstPreviewStop<CR>", { buffer = buf, desc = "Stop Typst Preview" })
+		vim.keymap.set(
+			"n",
+			"<leader>tu",
+			"<cmd>TypstPreviewUpdate<CR>",
+			{ buffer = buf, desc = "Update Typst binaries" }
+		)
+		vim.keymap.set(
+			"n",
+			"<leader>tf",
+			"<cmd>TypstPreviewFollowCursorToggle<CR>",
+			{ buffer = buf, desc = "Toggle follow cursor" }
+		)
+		vim.keymap.set(
+			"n",
+			"<leader>ty",
+			"<cmd>TypstPreviewSyncCursor<CR>",
+			{ buffer = buf, desc = "Sync cursor with preview" }
+		)
 	end,
 })
 
---vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
---	pattern = "*.typ",
---	callback = function()
---		vim.cmd("silent! write")
---	end,
---})
-
--- VimTeX keymaps con <leader> (solo en buffers .tex)
+-----------------------------
+-- VimTeX Keymaps (LaTeX only)
+-----------------------------
 local aug = vim.api.nvim_create_augroup("vimtex_leader_keymaps", { clear = true })
 
 vim.api.nvim_create_autocmd("FileType", {
@@ -196,19 +252,24 @@ vim.api.nvim_create_autocmd("FileType", {
 	group = aug,
 	callback = function(ev)
 		local function nmap(lhs, rhs, desc)
-			vim.keymap.set("n", lhs, rhs, { buffer = ev.buf, silent = true, noremap = true, desc = desc })
+			vim.keymap.set("n", lhs, rhs, {
+				buffer = ev.buf,
+				silent = true,
+				noremap = true,
+				desc = desc,
+			})
 		end
 
-		-- Básicos
-		nmap("<leader>ll", "<cmd>VimtexCompile<CR>", "VimTeX: Compile/continously")
-		nmap("<leader>lv", "<cmd>VimtexView<CR>", "VimTeX: View PDF (forward search)")
-		nmap("<leader>lk", "<cmd>VimtexStop<CR>", "VimTeX: Stop COmpilation")
-		nmap("<leader>lc", "<cmd>VimtexClean<CR>", "VimTeX: Clean Helpers")
+		-- Basic VimTeX commands
+		nmap("<leader>ll", "<cmd>VimtexCompile<CR>", "Compile / continuous mode")
+		nmap("<leader>lv", "<cmd>VimtexView<CR>", "Open PDF viewer")
+		nmap("<leader>lk", "<cmd>VimtexStop<CR>", "Stop compilation")
+		nmap("<leader>lc", "<cmd>VimtexClean<CR>", "Clean auxiliary files")
 
-		-- Optional
-		nmap("<leader>le", "<cmd>VimtexErrors<CR>", "VimTeX: Errors/Quickfix")
-		nmap("<leader>li", "<cmd>VimtexInfo<CR>", "VimTeX: Project Info")
-		nmap("<leader>lt", "<cmd>VimtexTocToggle<CR>", "VimTeX: TOC Toggle")
-		nmap("<leader>lq", "<cmd>VimtexLog<CR>", "VimTeX: Log")
+		-- Optional extras
+		nmap("<leader>le", "<cmd>VimtexErrors<CR>", "Show errors")
+		nmap("<leader>li", "<cmd>VimtexInfo<CR>", "Project info")
+		nmap("<leader>lt", "<cmd>VimtexTocToggle<CR>", "Toggle TOC")
+		nmap("<leader>lq", "<cmd>VimtexLog<CR>", "Show compilation log")
 	end,
 })
