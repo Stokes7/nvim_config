@@ -9,7 +9,7 @@ return {
 				transparency = transparency_enabled,
 			},
 			colors = {
-				red = "#FF4D4D",
+				red = "#FF5C5C",
 			},
 		})
 
