@@ -19,7 +19,7 @@ return {
 				"isort", -- Python imports
 				"ruff", -- Python formatter & linter
 				"clang-format", -- C / C++
-				--"fprettify", -- Fortran
+				"fprettify", -- Fortran
 				"checkmake", -- Makefiles
 				--"prettier", -- HTML, JSON, YAML, Markdown
 			},
@@ -47,11 +47,13 @@ return {
 
 				-- C / C++
 				formatting.clang_format.with({
-					extra_args = { "--style=Google" }, -- or LLVM, Mozilla, WebKit, etc.
+					extra_args = { "--style=file" }, -- or google, LLVM, Mozilla, WebKit, etc.
 				}),
 
 				-- Fortran
-				--formatting.fprettify,
+				formatting.fprettify.with({
+					filetypes = { "fortran" }, -- o { "fortran", "f90", "f95" } si los tienes así
+				}),
 			},
 		})
 

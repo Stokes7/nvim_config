@@ -235,11 +235,6 @@ return {
 						-- If you see encoding warnings, uncomment next line:
 						-- "--offset-encoding=utf-16",
 					},
-					-- Example: turn off formatting here if you prefer an external formatter
-					-- on_attach = function(client, _)
-					--   client.server_capabilities.documentFormattingProvider = false
-					-- end,
-					-- Optional extra settings
 
 					filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
 
@@ -275,6 +270,20 @@ return {
 							},
 							-- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
 							-- diagnostics = { disable = { 'missing-fields' } },
+						},
+					},
+				},
+
+				fortls = {
+					filetypes = { "fortran" },
+					settings = {
+						fortls = {
+							-- opciones típicas (opcionales)
+							incremental_sync = true,
+							-- Puedes activar/ajustar según te guste:
+							diagnostics = true,
+							-- hover_signature = true,
+							autocomplete_name_only = false,
 						},
 					},
 				},
