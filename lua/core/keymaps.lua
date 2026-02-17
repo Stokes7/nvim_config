@@ -263,6 +263,15 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 -----------------------------
+--- Leetcode
+-----------------------------
+vim.api.nvim_create_user_command("LeetMMix", function()
+	vim.cmd("Leet list")
+	vim.defer_fn(function()
+		vim.fn.feedkeys("medium array matrix simulation hash unsolved", "t")
+	end, 300)
+end, {})
+-----------------------------
 -- VimTeX Keymaps (LaTeX only)
 -----------------------------
 local aug = vim.api.nvim_create_augroup("vimtex_leader_keymaps", { clear = true })
@@ -293,3 +302,10 @@ vim.api.nvim_create_autocmd("FileType", {
 		nmap("<leader>lq", "<cmd>VimtexLog<CR>", "Show compilation log")
 	end,
 })
+
+-- LeetCode keymaps
+vim.keymap.set("n", "<leader>ll", ":Leet<CR>", { desc = "LeetCode menu" })
+vim.keymap.set("n", "<leader>lt", ":Leet test<CR>", { desc = "LeetCode test" })
+vim.keymap.set("n", "<leader>lr", ":Leet run<CR>", { desc = "LeetCode run examples" })
+vim.keymap.set("n", "<leader>ls", ":Leet submit<CR>", { desc = "LeetCode submit" })
+

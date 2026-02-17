@@ -73,6 +73,7 @@ require("lazy").setup({
 	require("plugins.indent-blankline"),
 	require("plugins.misc"),
 	require("plugins.typst"),
+	require("plugins.leetcode"),
 	-- require("plugins.vimtex"),
 	-- require("plugins.nvchadui"),
 	-- require("plugins.nvchad_neotree"),
