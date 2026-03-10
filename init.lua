@@ -3,6 +3,9 @@
 -----------------------------
 require("core.keymaps")
 
+-- Nord font
+vim.g.have_nerd_font = true
+
 -----------------------------
 -- Keymaps Checker
 -----------------------------
@@ -44,19 +47,6 @@ rtp:prepend(lazypath)
 require("lazy").setup({
 
 	-----------------------------
-	-- Neo-tree (file explorer)
-	-----------------------------
-	{
-		"nvim-neo-tree/neo-tree.nvim",
-		branch = "v3.x",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"MunifTanjim/nui.nvim",
-		},
-		lazy = false,
-	},
-
-	-----------------------------
 	-- Plugin Modules
 	-----------------------------
 	require("plugins.colortheme"),
@@ -74,6 +64,7 @@ require("lazy").setup({
 	require("plugins.misc"),
 	require("plugins.typst"),
 	require("plugins.leetcode"),
+	require("plugins.typr"),
 	-- require("plugins.vimtex"),
 	-- require("plugins.nvchadui"),
 	-- require("plugins.nvchad_neotree"),

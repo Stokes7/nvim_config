@@ -16,14 +16,14 @@ vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 -----------------------------
 local opts = { noremap = true, silent = true }
 
------------------------------
+----------------------------
 -- File Operations
 -----------------------------
 -- Save file
 vim.keymap.set("n", "<C-s>", "<cmd>w<CR>", opts)
 
 -- Save file without auto-formatting
-vim.keymap.set("n", "<leader>sn", "<cmd>noautocmd w<CR>", opts)
+vim.keymap.set("n", "<leader>fn", "<cmd>noautocmd w<CR>", { desc = "Save without autocommands" })
 
 -- Quit file
 vim.keymap.set("n", "<C-q>", "<cmd>q<CR>", opts)
@@ -31,11 +31,8 @@ vim.keymap.set("n", "<C-q>", "<cmd>q<CR>", opts)
 -----------------------------
 -- Editing Shortcuts
 -----------------------------
--- Delete a single character without yanking
-vim.keymap.set("n", "x", '"_x', opts)
-
--- Delete whole line without yanking
-vim.keymap.set("n", "X", '"_dd', opts)
+vim.keymap.set("n", "<leader>xx", '"_x', { desc = "Delete char without yank" })
+vim.keymap.set("n", "<leader>xX", '"_dd', { desc = "Delete line without yank" })
 
 -----------------------------
 -- Navigation Enhancements
@@ -51,7 +48,7 @@ vim.keymap.set("n", "N", "Nzzzv", opts)
 -----------------------------
 -- Diagnostics Toggle
 -----------------------------
-vim.keymap.set("n", "<leader>td", function()
+vim.keymap.set("n", "<leader>ud", function()
 	local config = vim.diagnostic.config()
 	if config.virtual_text or config.signs then
 		vim.diagnostic.config({
@@ -59,14 +56,14 @@ vim.keymap.set("n", "<leader>td", function()
 			signs = false,
 			underline = false,
 		})
-		print("Diagnostics OFF")
+		vim.notify("Diagnostics OFF")
 	else
 		vim.diagnostic.config({
 			virtual_text = { source = "if_many", spacing = 2 },
 			signs = true,
 			underline = { severity = vim.diagnostic.severity.ERROR },
 		})
-		print("Diagnostics ON")
+		vim.notify("Diagnostics ON")
 	end
 end, { desc = "Toggle diagnostics" })
 
@@ -110,67 +107,55 @@ vim.keymap.set("n", "<Down>", ":resize +2<CR>", opts)
 vim.keymap.set("n", "<Left>", ":vertical resize -2<CR>", opts)
 vim.keymap.set("n", "<Right>", ":vertical resize +2<CR>", opts)
 
-vim.keymap.set("n", "<C-k>", ":wincmd k<CR>", opts)
-vim.keymap.set("n", "<C-j>", ":wincmd j<CR>", opts)
-vim.keymap.set("n", "<C-h>", ":wincmd h<CR>", opts)
-vim.keymap.set("n", "<C-l>", ":wincmd l<CR>", opts)
+-- vim.keymap.set("n", "<C-k>", ":wincmd k<CR>", opts)
+-- vim.keymap.set("n", "<C-j>", ":wincmd j<CR>", opts)
+-- vim.keymap.set("n", "<C-h>", ":wincmd h<CR>", opts)
+-- vim.keymap.set("n", "<C-l>", ":wincmd l<CR>", opts)
 
 -----------------------------
 -- Buffer Navigation
 -----------------------------
-vim.keymap.set("n", "<Tab>", ":bnext<CR>", opts)
-vim.keymap.set("n", "<S-Tab>", ":bprevious<CR>", opts)
+vim.keymap.set("n", "H", "<cmd>bprevious<CR>", { desc = "Previous buffer" })
+vim.keymap.set("n", "L", "<cmd>bnext<CR>", { desc = "Next buffer" })
 
 -- Close buffer safely
-vim.keymap.set("n", "<leader>x", "<cmd>bn|bd #<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>bd", "<cmd>bn|bd #<CR>", { noremap = true, silent = true, desc = "Delete buffer" })
 
 -- New empty buffer
-vim.keymap.set("n", "<leader>b", "<cmd>enew<CR>", opts)
+vim.keymap.set("n", "<leader>bn", "<cmd>enew<CR>", { desc = "New buffer" })
 
 -----------------------------
 -- Window Management
 -----------------------------
-vim.keymap.set("n", "<leader>v", "<C-w>v", opts) -- Vertical split
-vim.keymap.set("n", "<leader>h", "<C-w>s", opts) -- Horizontal split
-vim.keymap.set("n", "<leader>se", "<C-w>=", opts) -- Equalize splits
-vim.keymap.set("n", "<leader>xs", ":close<CR>", opts)
+vim.keymap.set("n", "<leader>wv", "<C-w>v", { desc = "Vertical split" })
+vim.keymap.set("n", "<leader>ws", "<C-w>s", { desc = "Horizontal split" })
+vim.keymap.set("n", "<leader>we", "<C-w>=", { desc = "Equalize splits" })
+vim.keymap.set("n", "<leader>wc", "<cmd>close<CR>", { desc = "Close window" })
 
 -----------------------------
 -- Tab Management
 -----------------------------
 vim.keymap.set("n", "<leader>to", ":tabnew<CR>", opts)
 vim.keymap.set("n", "<leader>tx", ":tabclose<CR>", opts)
-vim.keymap.set("n", "<leader>tn", ":tabn<CR>", opts)
-vim.keymap.set("n", "<leader>tp", ":tabp<CR>", opts)
+vim.keymap.set("n", "<leader>tP", ":tabp<CR>", opts)
+vim.keymap.set("n", "<leader>tN", ":tabn<CR>", opts)
 
 -----------------------------
 -- Toggle Line Wrapping
 -----------------------------
-vim.keymap.set("n", "<leader>lw", function()
-	vim.opt.wrap = not vim.opt.wrap:get()
+vim.keymap.set("n", "<leader>uw", function()
+	vim.wo.wrap = not vim.wo.wrap
+	vim.notify("Wrap " .. (vim.wo.wrap and "ON" or "OFF"))
+end, { desc = "Toggle line wrap" })
 
-	if vim.opt.wrap:get() then
-		-- Move by visual lines in Normal mode
-		vim.keymap.set("n", "j", "gj", opts)
-		vim.keymap.set("n", "k", "gk", opts)
+-- Smart movement when wrap is enabled
+vim.keymap.set("n", "j", function()
+	return vim.v.count == 0 and vim.wo.wrap and "gj" or "j"
+end, { expr = true, silent = true })
 
-		-- Move by visual lines in Insert mode (arrows)
-		vim.keymap.set("i", "<Down>", "<C-o>gj", opts)
-		vim.keymap.set("i", "<Up>", "<C-o>gk", opts)
-
-		print("Wrap ON - visual line movement active")
-	else
-		-- Restore default movement
-		vim.keymap.set("n", "j", "j", opts)
-		vim.keymap.set("n", "k", "k", opts)
-
-		-- Restore arrow keys
-		vim.keymap.set("i", "<Down>", "<Down>", opts)
-		vim.keymap.set("i", "<Up>", "<Up>", opts)
-
-		print("Wrap OFF - normal movement active")
-	end
-end, opts)
+vim.keymap.set("n", "k", function()
+	return vim.v.count == 0 and vim.wo.wrap and "gk" or "k"
+end, { expr = true, silent = true })
 
 -----------------------------
 -- Visual Mode Improvements
@@ -193,9 +178,9 @@ vim.keymap.set("n", "]d", function()
 	vim.diagnostic.jump({ count = 1, float = true })
 end, { desc = "Next diagnostic" })
 
-vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "Open diagnostic tooltip" })
+vim.keymap.set("n", "<leader>dd", vim.diagnostic.open_float, { desc = "Open diagnostic tooltip" })
 
-vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
+vim.keymap.set("n", "<leader>dq", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
 
 -----------------------------
 -- Spellcheck Toggle (English only)
@@ -204,24 +189,25 @@ local allowed = {
 	markdown = true,
 	text = true,
 	gitcommit = true,
+	tex = true,
 	latex = true,
 	typst = true,
 }
 
-vim.keymap.set("n", "<leader>sc", function()
+vim.keymap.set("n", "<leader>us", function()
 	local ft = vim.bo.filetype
 	if not allowed[ft] then
-		print("Spellcheck not enabled for filetype: " .. (ft or ""))
+		vim.notify("Spellcheck not enabled for filetype: " .. (ft or ""))
 		return
 	end
 
 	if vim.wo.spell then
 		vim.wo.spell = false
-		print("Spellcheck OFF")
+		vim.notify("Spellcheck OFF")
 	else
 		vim.opt_local.spell = true
 		vim.opt_local.spelllang = { "en_us" }
-		print("Spellcheck ON (en_us)")
+		vim.notify("Spellcheck ON (en_us)")
 	end
 end, { desc = "Toggle English spellcheck" })
 
@@ -236,26 +222,26 @@ vim.api.nvim_create_autocmd("FileType", {
 		-- Typst preview commands
 		vim.keymap.set(
 			"n",
-			"<leader>tp",
+			"<leader>mp",
 			"<cmd>TypstPreviewToggle<CR>",
 			{ buffer = buf, desc = "Toggle Typst Preview" }
 		)
-		vim.keymap.set("n", "<leader>ts", "<cmd>TypstPreviewStop<CR>", { buffer = buf, desc = "Stop Typst Preview" })
+		vim.keymap.set("n", "<leader>ms", "<cmd>TypstPreviewStop<CR>", { buffer = buf, desc = "Stop Typst Preview" })
 		vim.keymap.set(
 			"n",
-			"<leader>tu",
+			"<leader>mu",
 			"<cmd>TypstPreviewUpdate<CR>",
 			{ buffer = buf, desc = "Update Typst binaries" }
 		)
 		vim.keymap.set(
 			"n",
-			"<leader>tf",
+			"<leader>mf",
 			"<cmd>TypstPreviewFollowCursorToggle<CR>",
 			{ buffer = buf, desc = "Toggle follow cursor" }
 		)
 		vim.keymap.set(
 			"n",
-			"<leader>ty",
+			"<leader>my",
 			"<cmd>TypstPreviewSyncCursor<CR>",
 			{ buffer = buf, desc = "Sync cursor with preview" }
 		)
@@ -274,38 +260,8 @@ end, {})
 -----------------------------
 -- VimTeX Keymaps (LaTeX only)
 -----------------------------
-local aug = vim.api.nvim_create_augroup("vimtex_leader_keymaps", { clear = true })
-
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = "tex",
-	group = aug,
-	callback = function(ev)
-		local function nmap(lhs, rhs, desc)
-			vim.keymap.set("n", lhs, rhs, {
-				buffer = ev.buf,
-				silent = true,
-				noremap = true,
-				desc = desc,
-			})
-		end
-
-		-- Basic VimTeX commands
-		nmap("<leader>ll", "<cmd>VimtexCompile<CR>", "Compile / continuous mode")
-		nmap("<leader>lv", "<cmd>VimtexView<CR>", "Open PDF viewer")
-		nmap("<leader>lk", "<cmd>VimtexStop<CR>", "Stop compilation")
-		nmap("<leader>lc", "<cmd>VimtexClean<CR>", "Clean auxiliary files")
-
-		-- Optional extras
-		nmap("<leader>le", "<cmd>VimtexErrors<CR>", "Show errors")
-		nmap("<leader>li", "<cmd>VimtexInfo<CR>", "Project info")
-		nmap("<leader>lt", "<cmd>VimtexTocToggle<CR>", "Toggle TOC")
-		nmap("<leader>lq", "<cmd>VimtexLog<CR>", "Show compilation log")
-	end,
-})
-
 -- LeetCode keymaps
-vim.keymap.set("n", "<leader>ll", ":Leet<CR>", { desc = "LeetCode menu" })
-vim.keymap.set("n", "<leader>lt", ":Leet test<CR>", { desc = "LeetCode test" })
-vim.keymap.set("n", "<leader>lr", ":Leet run<CR>", { desc = "LeetCode run examples" })
-vim.keymap.set("n", "<leader>ls", ":Leet submit<CR>", { desc = "LeetCode submit" })
-
+vim.keymap.set("n", "<leader>cl", ":Leet<CR>", { desc = "LeetCode menu" })
+vim.keymap.set("n", "<leader>ct", ":Leet test<CR>", { desc = "LeetCode test" })
+vim.keymap.set("n", "<leader>cr", ":Leet run<CR>", { desc = "LeetCode run examples" })
+vim.keymap.set("n", "<leader>cs", ":Leet submit<CR>", { desc = "LeetCode submit" })

@@ -2,6 +2,7 @@
 vim.o.laststatus = 3
 return {
 	"nvim-lualine/lualine.nvim",
+	event = "VeryLazy",
 	config = function()
 		-- Adapted from: https://github.com/nvim-lualine/lualine.nvim/blob/master/lua/lualine/themes/onedark.lua
 		local colors = {
