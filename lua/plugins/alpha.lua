@@ -5,6 +5,7 @@ return {
 	config = function()
 		local alpha = require("alpha")
 		local dashboard = require("alpha.themes.dashboard")
+		local dashboard_utils = require("core.dashboard")
 
 		-- seed once
 		math.randomseed(os.time())
@@ -111,5 +112,21 @@ return {
 
 		dashboard.opts.opts.noautocmd = true
 		alpha.setup(dashboard.opts)
+
+		local group = vim.api.nvim_create_augroup("AlphaReopenLastBuffer", { clear = true })
+
+		vim.api.nvim_create_autocmd("VimLeavePre", {
+			group = group,
+			callback = function()
+				dashboard_utils.exiting = true
+			end,
+		})
+
+		vim.api.nvim_create_autocmd({ "BufDelete", "BufWipeout", "WinClosed" }, {
+			group = group,
+			callback = function()
+				dashboard_utils.open_alpha_if_needed()
+			end,
+		})
 	end,
 }

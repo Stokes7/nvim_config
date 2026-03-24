@@ -119,7 +119,7 @@ vim.keymap.set("n", "H", "<cmd>bprevious<CR>", { desc = "Previous buffer" })
 vim.keymap.set("n", "L", "<cmd>bnext<CR>", { desc = "Next buffer" })
 
 -- Close buffer safely
-vim.keymap.set("n", "<leader>bd", "<cmd>bn|bd #<CR>", { noremap = true, silent = true, desc = "Delete buffer" })
+vim.keymap.set("n", "<leader>bd", "<cmd>Bdelete<CR>", { noremap = true, silent = true, desc = "Delete buffer" })
 
 -- New empty buffer
 vim.keymap.set("n", "<leader>bn", "<cmd>enew<CR>", { desc = "New buffer" })
