@@ -2,8 +2,8 @@
 -- Leader must be defined FIRST
 -----------------------------
 -- lazy.nvim requires <leader> to be set before loading plugins
--- vim.g.mapleader = " "
--- vim.g.maplocalleader = " "
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
 ----------------------------
 -- Leader Key Behavior

@@ -1,12 +1,12 @@
------------------------------
--- Leader must be defined FIRST
------------------------------
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-
--- Force smart-splits to use WezTerm integration
-vim.g.smart_splits_multiplexer_integration = "wezterm"
-
+-- -----------------------------
+-- -- Leader must be defined FIRST
+-- -----------------------------
+-- vim.g.mapleader = " "
+-- vim.g.maplocalleader = " "
+--
+-- -- Force smart-splits to use WezTerm integration
+-- vim.g.smart_splits_multiplexer_integration = "wezterm"
+--
 -----------------------------
 -- Keymaps
 -----------------------------
@@ -74,7 +74,7 @@ require("lazy").setup({
 	require("plugins.typst"),
 	require("plugins.leetcode"),
 	require("plugins.typr"),
-	require("plugins.smart-splits"),
+	--require("plugins.smart-splits"),
 	-- require("plugins.vimtex"),
 	-- require("plugins.nvchadui"),
 	-- require("plugins.nvchad_neotree"),
