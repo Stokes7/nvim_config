@@ -46,6 +46,7 @@ return {
 				{ "<leader>u", group = "toggle / ui" },
 				{ "<leader>w", group = "window" },
 				{ "<leader>x", group = "delete" },
+				{ "<leader>a", group = "Autocomplete / AI" },
 			})
 		end,
 	},

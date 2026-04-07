@@ -74,6 +74,7 @@ require("lazy").setup({
 	require("plugins.typst"),
 	require("plugins.leetcode"),
 	require("plugins.typr"),
+	require("plugins.codeium"),
 	--require("plugins.smart-splits"),
 	-- require("plugins.vimtex"),
 	-- require("plugins.nvchadui"),
