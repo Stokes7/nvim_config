@@ -35,7 +35,8 @@ return {
 			wk.setup({})
 			wk.add({
 				{ "<leader>b", group = "buffer" },
-				{ "<leader>c", group = "code" },
+				{ "<leader>l", group = "leetcode" },
+				{ "<leader>r", group = "csv" },
 				{ "<leader>d", group = "diagnostics" },
 				{ "<leader>f", group = "file" },
 				{ "<leader>g", group = "git" },
@@ -46,7 +47,7 @@ return {
 				{ "<leader>u", group = "toggle / ui" },
 				{ "<leader>w", group = "window" },
 				{ "<leader>x", group = "delete" },
-				{ "<leader>a", group = "Autocomplete / AI" },
+				{ "<leader>a", group = "autocomplete / AI" },
 			})
 		end,
 	},

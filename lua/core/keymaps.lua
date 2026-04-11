@@ -257,11 +257,49 @@ vim.api.nvim_create_user_command("LeetMMix", function()
 		vim.fn.feedkeys("medium array matrix simulation hash unsolved", "t")
 	end, 300)
 end, {})
+
 -----------------------------
 -- VimTeX Keymaps (LaTeX only)
 -----------------------------
 -- LeetCode keymaps
-vim.keymap.set("n", "<leader>cl", ":Leet<CR>", { desc = "LeetCode menu" })
-vim.keymap.set("n", "<leader>ct", ":Leet test<CR>", { desc = "LeetCode test" })
-vim.keymap.set("n", "<leader>cr", ":Leet run<CR>", { desc = "LeetCode run examples" })
-vim.keymap.set("n", "<leader>cs", ":Leet submit<CR>", { desc = "LeetCode submit" })
+vim.keymap.set("n", "<leader>ll", ":Leet<CR>", { desc = "LeetCode menu" })
+vim.keymap.set("n", "<leader>lt", ":Leet test<CR>", { desc = "LeetCode test" })
+vim.keymap.set("n", "<leader>lr", ":Leet run<CR>", { desc = "LeetCode run examples" })
+vim.keymap.set("n", "<leader>ls", ":Leet submit<CR>", { desc = "LeetCode submit" })
+
+-----------------------------
+-- CSV viewer
+-----------------------------
+vim.keymap.set("n", "<leader>ve", "<cmd>CsvViewEnable<CR>", { desc = "CSV: enable view" })
+vim.keymap.set("n", "<leader>vd", "<cmd>CsvViewDisable<CR>", { desc = "CSV: disable view" })
+vim.keymap.set("n", "<leader>vi", "<cmd>CsvViewInfo<CR>", { desc = "CSV: info" })
+
+vim.keymap.set("n", "<leader>vv", function()
+	vim.ui.input({
+		prompt = "Header line (empty=auto, 0=none, number=explicit): ",
+	}, function(input)
+		if input == nil then
+			return
+		end
+
+		input = vim.trim(input)
+
+		if input == "" then
+			vim.cmd("CsvViewEnable")
+			return
+		end
+
+		if input == "0" then
+			vim.cmd("CsvViewEnable header_lnum=none")
+			return
+		end
+
+		local n = tonumber(input)
+		if not n or n < 1 or math.floor(n) ~= n then
+			vim.notify("Invalid header line number", vim.log.levels.ERROR)
+			return
+		end
+
+		vim.cmd(string.format("CsvViewEnable header_lnum=%d", n))
+	end)
+end, { desc = "CSV: enable and choose header line" })

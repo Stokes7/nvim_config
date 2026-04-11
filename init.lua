@@ -76,6 +76,7 @@ require("lazy").setup({
 	require("plugins.typr"),
 	require("plugins.codeium"),
 	require("plugins.molten"),
+	require("plugins.csvview"),
 	--require("plugins.smart-splits"),
 	-- require("plugins.vimtex"),
 	-- require("plugins.nvchadui"),
