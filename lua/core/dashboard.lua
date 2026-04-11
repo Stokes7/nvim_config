@@ -48,26 +48,26 @@ function M.real_file_buffers()
 end
 
 function M.open_alpha_if_needed()
-	vim.schedule(function()
-		if M.exiting then
+	if M.exiting then
+		return
+	end
+
+	if vim.fn.exists(":Alpha") ~= 2 then
+		return
+	end
+
+	local current = vim.api.nvim_get_current_buf()
+	if vim.api.nvim_buf_is_valid(current) then
+		local ft = vim.bo[current].filetype
+		if ft == "alpha" or ft == "neo-tree" or ft == "neo-tree-popup" then
 			return
 		end
+	end
 
-		if vim.fn.exists(":Alpha") ~= 2 then
-			return
-		end
+	if #M.real_file_buffers() > 0 then
+		return
+	end
 
-		if #M.real_file_buffers() > 0 then
-			return
-		end
-
-		local current = vim.api.nvim_get_current_buf()
-		if vim.api.nvim_buf_is_valid(current) and vim.bo[current].filetype == "alpha" then
-			return
-		end
-
-		pcall(vim.cmd, "silent! Alpha")
-	end)
+	pcall(vim.cmd, "silent! Alpha")
 end
-
 return M

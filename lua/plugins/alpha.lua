@@ -111,6 +111,8 @@ return {
 		})
 
 		dashboard.opts.opts.noautocmd = true
+		dashboard.opts.opts.redraw_on_resize = false
+
 		alpha.setup(dashboard.opts)
 
 		local group = vim.api.nvim_create_augroup("AlphaReopenLastBuffer", { clear = true })
@@ -122,10 +124,24 @@ return {
 			end,
 		})
 
-		vim.api.nvim_create_autocmd({ "BufDelete", "BufWipeout", "WinClosed" }, {
+		vim.api.nvim_create_autocmd({ "BufDelete", "BufWipeout" }, {
 			group = group,
-			callback = function()
-				dashboard_utils.open_alpha_if_needed()
+			callback = function(args)
+				local buf = args.buf
+				if not vim.api.nvim_buf_is_valid(buf) then
+					return
+				end
+
+				local ft = vim.bo[buf].filetype
+				if ft == "neo-tree" or ft == "neo-tree-popup" or ft == "alpha" then
+					return
+				end
+
+				vim.schedule(function()
+					pcall(function()
+						dashboard_utils.open_alpha_if_needed()
+					end)
+				end)
 			end,
 		})
 	end,
