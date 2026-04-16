@@ -17,8 +17,25 @@ return {
 
 		-- Highlight constrast
 		local function set_strong_visual()
-			vim.api.nvim_set_hl(0, "Visual", { bg = "#5a4a78", fg = "#ffffff", bold = false })
-			vim.api.nvim_set_hl(0, "VisualNOS", { bg = "#5a4a78", fg = "#ffffff", bold = false })
+			local bg = "#5a4a78"
+			local fg = "#ffffff"
+
+			-- Visual selection
+			vim.api.nvim_set_hl(0, "Visual", { bg = bg, fg = fg, bold = false })
+			vim.api.nvim_set_hl(0, "VisualNOS", { bg = bg, fg = fg, bold = false })
+
+			-- Telescope selection (usa el mismo color)
+			vim.api.nvim_set_hl(0, "TelescopeSelection", {
+				bg = bg,
+				fg = fg,
+				bold = true,
+			})
+
+			-- Opcional: color de coincidencias dentro de Telescope
+			vim.api.nvim_set_hl(0, "TelescopeMatching", {
+				fg = "#cba6f7",
+				bold = true,
+			})
 		end
 
 		set_strong_visual()

@@ -102,10 +102,10 @@ vim.keymap.set(
 -----------------------------
 -- Normal Splits Navigation
 -----------------------------
--- vim.keymap.set("n", "<Up>", ":resize -2<CR>", opts)
--- vim.keymap.set("n", "<Down>", ":resize +2<CR>", opts)
--- vim.keymap.set("n", "<Left>", ":vertical resize -2<CR>", opts)
--- vim.keymap.set("n", "<Right>", ":vertical resize +2<CR>", opts)
+vim.keymap.set("n", "<Up>", ":resize -2<CR>", opts)
+vim.keymap.set("n", "<Down>", ":resize +2<CR>", opts)
+vim.keymap.set("n", "<Left>", ":vertical resize -2<CR>", opts)
+vim.keymap.set("n", "<Right>", ":vertical resize +2<CR>", opts)
 
 -- vim.keymap.set("n", "<C-k>", ":wincmd k<CR>", opts)
 -- vim.keymap.set("n", "<C-j>", ":wincmd j<CR>", opts)
