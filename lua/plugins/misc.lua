@@ -36,7 +36,8 @@ return {
 			wk.add({
 				{ "<leader>b", group = "buffer" },
 				{ "<leader>l", group = "leetcode" },
-				{ "<leader>r", group = "csv" },
+				{ "<leader>v", group = "csv" },
+				{ "<leader>j", group = "jupyter" },
 				{ "<leader>d", group = "diagnostics" },
 				{ "<leader>f", group = "file" },
 				{ "<leader>g", group = "git" },

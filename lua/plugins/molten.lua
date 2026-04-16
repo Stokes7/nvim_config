@@ -45,8 +45,8 @@ return {
 		vim.g.molten_image_provider = "wezterm"
 
 		-- Open images in a split on the right
-		--vim.g.molten_split_direction = nil
-		--vim.g.molten_split_size = 40
+		vim.g.molten_split_direction = nil
+		vim.g.molten_split_size = 40
 	end,
 
 	config = function()
