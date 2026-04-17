@@ -3,9 +3,6 @@ return {
 	version = "^1.0.0",
 	build = ":UpdateRemotePlugins",
 	ft = { "python" },
-	dependencies = {
-		"willothy/wezterm.nvim",
-	},
 
 	init = function()
 		-- Automatically prompt/init a kernel when needed
@@ -21,7 +18,7 @@ return {
 		vim.g.molten_virt_text_output = true
 
 		-- Show output also as virtual lines
-		vim.g.molten_output_virt_lines = true
+		vim.g.molten_output_virt_lines = false
 
 		-- Limit inline output size
 		vim.g.molten_virt_text_max_lines = 20
@@ -41,18 +38,16 @@ return {
 		-- Do not auto-copy output
 		vim.g.molten_copy_output = false
 
-		-- Use WezTerm as image provider
-		vim.g.molten_image_provider = "wezterm"
+		-- Use image.nvim to display images
+		vim.g.molten_image_provider = "image.nvim"
+		vim.g.molten_image_location = "virt"
 
 		-- Open images in a split on the right
-		vim.g.molten_split_direction = nil
-		vim.g.molten_split_size = 40
+		-- vim.g.molten_split_direction = "right"
+		-- vim.g.molten_split_size = 40
 	end,
 
 	config = function()
-		require("wezterm").setup({
-			create_new_pane = false,
-		})
 		local cell_pattern = "^%s*#%s*%%"
 
 		local function is_python()
