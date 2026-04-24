@@ -31,7 +31,11 @@ return {
 				bold = true,
 			})
 
-			-- Opcional: color de coincidencias dentro de Telescope
+			-- Statusline in bold
+			vim.api.nvim_set_hl(0, "StatusLine", { bold = true })
+			vim.api.nvim_set_hl(0, "StatusLineNC", { bold = true })
+
+			-- Optional: color coincidence inside of telescope
 			vim.api.nvim_set_hl(0, "TelescopeMatching", {
 				fg = "#cba6f7",
 				bold = true,
