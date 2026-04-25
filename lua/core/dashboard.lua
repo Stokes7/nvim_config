@@ -28,6 +28,7 @@ function M.is_real_file_buffer(buf)
 	end
 
 	local name = vim.api.nvim_buf_get_name(buf)
+
 	if name == "" then
 		return vim.bo[buf].modified
 	end
@@ -40,7 +41,7 @@ function M.real_file_buffers()
 
 	for _, buf in ipairs(vim.api.nvim_list_bufs()) do
 		if M.is_real_file_buffer(buf) then
-			buffers[#buffers + 1] = buf
+			table.insert(buffers, buf)
 		end
 	end
 
@@ -57,17 +58,22 @@ function M.open_alpha_if_needed()
 	end
 
 	local current = vim.api.nvim_get_current_buf()
+
 	if vim.api.nvim_buf_is_valid(current) then
 		local ft = vim.bo[current].filetype
-		if ft == "alpha" or ft == "neo-tree" or ft == "neo-tree-popup" then
+
+		-- Only skip if already in alpha
+		if ft == "alpha" then
 			return
 		end
 	end
 
+	-- If there are still real buffers → do nothing
 	if #M.real_file_buffers() > 0 then
 		return
 	end
 
 	pcall(vim.cmd, "silent! Alpha")
 end
+
 return M

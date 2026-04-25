@@ -7,7 +7,11 @@ return {
 		local dashboard = require("alpha.themes.dashboard")
 		local dashboard_utils = require("core.dashboard")
 
-		-- seed once
+		vim.api.nvim_set_hl(0, "DashboardHeader", { fg = "#ff3b3b", bold = true })
+		vim.api.nvim_set_hl(0, "DashboardButton", { fg = "#ffffff" })
+		vim.api.nvim_set_hl(0, "DashboardShortcut", { fg = "#ff5c5c", bold = true })
+		vim.api.nvim_set_hl(0, "DashboardFooter", { fg = "#ff5c5c", italic = true })
+
 		math.randomseed(os.time())
 
 		local function get_all_files_in_dir(dir)
@@ -22,12 +26,14 @@ return {
 		local function load_random_header()
 			local header_folder = vim.fs.normalize(vim.fn.stdpath("config") .. "/lua/alpha_images/")
 			local files = get_all_files_in_dir(header_folder)
+
 			if #files == 0 then
 				vim.notify("Alpha: no .lua headers in " .. header_folder, vim.log.levels.WARN)
 				return nil
 			end
 
 			local random_file = files[math.random(#files)]
+
 			if not vim.startswith(random_file, header_folder) then
 				vim.notify("Alpha: file not under folder: " .. random_file, vim.log.levels.WARN)
 				return nil
@@ -37,6 +43,7 @@ return {
 			local module_name = "alpha_images." .. relative_path:gsub("[/\\]", "."):gsub("%.lua$", "")
 
 			package.loaded[module_name] = nil
+
 			local ok, module = pcall(require, module_name)
 			if not ok then
 				vim.notify(
@@ -56,38 +63,53 @@ return {
 			end
 		end
 
-		local function change_header()
-			local new_header = load_random_header()
-			if new_header then
-				dashboard.config.layout[2] = new_header
-				pcall(vim.cmd.AlphaRedraw)
-			else
-				vim.notify("Alpha: no header to load.", vim.log.levels.WARN)
-			end
-		end
-
-		-- pick a header (with fallback)
 		local header = load_random_header() or dashboard.section.header
 
-		-- buttons (kept the useful ones; removed Obsidian)
 		dashboard.section.buttons.val = {
-			dashboard.button("w", "🖌️ Change header image", function()
-				change_header()
+			dashboard.button("w", "󰏘  Change header image", function()
+				local new_header = load_random_header()
+				if new_header then
+					header = new_header
+					dashboard.config.layout[1].val = get_vertical_padding()
+					dashboard.config.layout[2] = new_header
+					pcall(vim.cmd.AlphaRedraw)
+				end
 			end),
-			dashboard.button("c", "🛠️ Settings", ":e $HOME/.config/nvim/init.lua<CR>"),
-			dashboard.button("r", "⌛ Recent files", ":Telescope oldfiles<CR>"),
-			dashboard.button("t", "🖮  Practice typing with Typr", ":Typr<CR>"),
-			dashboard.button("u", "🔌 Update plugins", "<cmd>Lazy update<CR>"),
+			dashboard.button("c", "󰒓  Settings", ":e $HOME/.config/nvim/init.lua<CR>"),
+			dashboard.button("r", "󰄉  Recent files", ":Telescope oldfiles<CR>"),
+			dashboard.button("t", "󰆍  Practice typing", ":Typr<CR>"),
+			dashboard.button("u", "󰚰  Update plugins", "<cmd>Lazy update<CR>"),
 		}
 
+		for _, button in ipairs(dashboard.section.buttons.val) do
+			button.opts.hl = "DashboardButton"
+			button.opts.hl_shortcut = "DashboardShortcut"
+		end
+
+		function get_vertical_padding()
+			local height = vim.fn.winheight(0)
+			local header_height = type(header.val) == "table" and #header.val or 6
+			local buttons_height = #dashboard.section.buttons.val
+			local footer_height = 4
+
+			local content_height = header_height + buttons_height + footer_height + 4
+			local padding = math.floor((height - content_height) / 2)
+
+			return math.max(padding, 1)
+		end
+
 		dashboard.config.layout = {
-			{ type = "padding", val = 3 },
+			{ type = "padding", val = get_vertical_padding() },
 			header,
-			{ type = "padding", val = 2 },
+			{ type = "padding", val = 3 },
 			{
 				type = "group",
 				val = {
-					{ type = "group", val = dashboard.section.buttons.val, opts = { spacing = 1 } },
+					{
+						type = "group",
+						val = dashboard.section.buttons.val,
+						opts = { spacing = 1 },
+					},
 				},
 				opts = { layout = "horizontal" },
 			},
@@ -95,17 +117,23 @@ return {
 			dashboard.section.footer,
 		}
 
-		-- footer stats (fix: set footer hl, not header)
 		vim.api.nvim_create_autocmd("User", {
 			pattern = "VimStarted",
 			once = true,
 			callback = function()
 				local stats = require("lazy").stats()
 				local ms = math.floor(stats.startuptime * 100 + 0.5) / 100
-				dashboard.section.footer.val =
-					{ " ", " ", " ", " Loaded " .. stats.count .. " plugins  in " .. ms .. " ms " }
+
+				dashboard.section.footer.val = {
+					" ",
+					" ",
+					" ",
+					" Loaded " .. stats.count .. " plugins  in " .. ms .. " ms ",
+				}
+
 				dashboard.section.footer.opts = dashboard.section.footer.opts or {}
 				dashboard.section.footer.opts.hl = "DashboardFooter"
+
 				pcall(vim.cmd.AlphaRedraw)
 			end,
 		})
@@ -142,6 +170,19 @@ return {
 						dashboard_utils.open_alpha_if_needed()
 					end)
 				end)
+			end,
+		})
+
+		vim.api.nvim_create_autocmd("FileType", {
+			group = group,
+			pattern = { "neo-tree", "neo-tree-popup" },
+			callback = function()
+				for _, win in ipairs(vim.api.nvim_list_wins()) do
+					local buf = vim.api.nvim_win_get_buf(win)
+					if vim.bo[buf].filetype == "alpha" then
+						pcall(vim.api.nvim_win_close, win, true)
+					end
+				end
 			end,
 		})
 	end,
