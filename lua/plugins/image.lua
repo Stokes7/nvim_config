@@ -8,12 +8,12 @@ return {
 		-- =========================================
 		-- Image sizing (Molten outputs)
 		-- =========================================
-		max_width = 120, -- width in terminal columns
-		max_height = 20, -- height in terminal lines
+		max_width = 100, -- width in terminal columns
+		-- max_height = 40, -- height in terminal lines
 
 		-- scale relative to window (important for splits)
-		max_width_window_percentage = 100,
-		max_height_window_percentage = 60,
+		max_width_window_percentage = 140,
+		max_height_window_percentage = 80,
 
 		-- =========================================
 		-- Performance / behavior
