@@ -173,16 +173,24 @@ return {
 			end,
 		})
 
-		vim.api.nvim_create_autocmd("FileType", {
+		vim.api.nvim_create_autocmd("VimResized", {
 			group = group,
-			pattern = { "neo-tree", "neo-tree-popup" },
 			callback = function()
-				for _, win in ipairs(vim.api.nvim_list_wins()) do
-					local buf = vim.api.nvim_win_get_buf(win)
-					if vim.bo[buf].filetype == "alpha" then
-						pcall(vim.api.nvim_win_close, win, true)
+				vim.schedule(function()
+					for _, win in ipairs(vim.api.nvim_list_wins()) do
+						local buf = vim.api.nvim_win_get_buf(win)
+
+						if vim.bo[buf].filetype == "alpha" then
+							local current_win = vim.api.nvim_get_current_win()
+
+							vim.api.nvim_set_current_win(win)
+							pcall(vim.cmd.AlphaRedraw)
+							vim.api.nvim_set_current_win(current_win)
+
+							break
+						end
 					end
-				end
+				end)
 			end,
 		})
 	end,
