@@ -181,12 +181,5 @@ return { -- Autocompletion
 			print("cmp Buffer: " .. (vim.g.cmp_buffer_enabled and "ON" or "OFF"))
 		end, { desc = "Toggle cmp Buffer source" })
 
-		-- Toggle AI source dentro de cmp
-		vim.keymap.set("n", "<leader>aa", function()
-			vim.g.cmp_codeium_enabled = not vim.g.cmp_codeium_enabled
-			setup_cmp()
-			cmp.abort()
-			print("cmp AI: " .. (vim.g.cmp_codeium_enabled and "ON" or "OFF"))
-		end, { desc = "Toggle cmp AI source" })
 	end,
 }

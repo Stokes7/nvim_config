@@ -3,14 +3,19 @@ return {
 	{
 		-- Tmux & split window navigation
 		"christoomey/vim-tmux-navigator",
-		lazy = false,
-		-- "mrjones2014/smart-splits.nvim",
-		-- lazy = false, -- <- clave: cargar siempre al inicio
-		-- config = function()
-		-- 	require("smart-splits").setup({
-		-- 		-- tu config opcional aquí
-		-- 	})
-		-- end,
+		cmd = {
+			"TmuxNavigateLeft", "TmuxNavigateDown",
+			"TmuxNavigateUp", "TmuxNavigateRight", "TmuxNavigatePrevious",
+		},
+		keys = {
+			{ "<C-h>", "<cmd>TmuxNavigateLeft<CR>",  desc = "Window left" },
+			{ "<C-j>", "<cmd>TmuxNavigateDown<CR>",  desc = "Window down" },
+			{ "<C-k>", "<cmd>TmuxNavigateUp<CR>",    desc = "Window up" },
+			{ "<C-l>", "<cmd>TmuxNavigateRight<CR>", desc = "Window right" },
+		},
+		init = function()
+			vim.g.tmux_navigator_no_mappings = 1
+		end,
 	},
 	{
 		-- Detect tabstop and shiftwidth automatically
@@ -42,6 +47,7 @@ return {
 				{ "<leader>f", group = "file" },
 				{ "<leader>g", group = "git" },
 				{ "<leader>m", group = "markup" },
+				{ "<leader>e", group = "explorer" },
 				{ "<leader>n", group = "neo-tree" },
 				{ "<leader>s", group = "search" },
 				{ "<leader>t", group = "tab" },

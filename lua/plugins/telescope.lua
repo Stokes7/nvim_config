@@ -6,7 +6,6 @@ return {
   keys = {
     { '<leader>?', function() require('telescope.builtin').oldfiles() end, desc = 'Recent files' },
     { '<leader><leader>', function() require('telescope.builtin').buffers() end, desc = 'Buffers' },
-    { '<leader>sb', function() require('telescope.builtin').buffers() end, desc = 'Search buffers' },
     { '<leader>sd', function() require('telescope.builtin').diagnostics() end, desc = 'Search diagnostics' },
     { '<leader>sf', function() require('telescope.builtin').find_files() end, desc = 'Search files' },
     { '<leader>sg', function() require('telescope.builtin').live_grep() end, desc = 'Search grep' },
@@ -14,7 +13,6 @@ return {
     { '<leader>sm', function() require('telescope.builtin').marks() end, desc = 'Search marks' },
     { '<leader>sr', function() require('telescope.builtin').resume() end, desc = 'Search resume' },
     { '<leader>sw', function() require('telescope.builtin').grep_string() end, desc = 'Search current word' },
-    { '<leader>s.', function() require('telescope.builtin').oldfiles() end, desc = 'Search recent files' },
     {
       '<leader>s/',
       function()
@@ -71,6 +69,7 @@ return {
     local actions = require 'telescope.actions'
     require('telescope').setup {
       defaults = {
+        path_display = { filename_first = { reverse_directories = true } },
         mappings = {
           i = {
             ['<C-k>'] = actions.move_selection_previous, -- move to prev result
@@ -98,25 +97,20 @@ return {
             },
           },
         },
-      },
-      live_grep = {
-        file_ignore_patterns = { 'node_modules', '.git', '.venv' },
-        additional_args = function(_)
-          return { '--hidden' }
-        end,
-      },
-      path_display = {
-        filename_first = {
-          reverse_directories = true,
+        live_grep = {
+          file_ignore_patterns = { 'node_modules', '.git', '.venv' },
+          additional_args = function(_)
+            return { '--hidden' }
+          end,
+        },
+        git_files = {
+          previewer = false,
         },
       },
       extensions = {
         ['ui-select'] = {
           require('telescope.themes').get_dropdown(),
         },
-      },
-      git_files = {
-        previewer = false,
       },
     }
 

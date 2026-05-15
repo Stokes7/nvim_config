@@ -42,7 +42,6 @@ return {
 				require("none-ls.formatting.ruff").with({ -- Python format
 					extra_args = { "--extend-select", "I" },
 				}),
-				formatting.isort, -- organize imports
 
 				-- C / C++
 				formatting.clang_format.with({

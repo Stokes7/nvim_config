@@ -7,7 +7,11 @@
 -- -- Force smart-splits to use WezTerm integration
 -- vim.g.smart_splits_multiplexer_integration = "wezterm"
 --
---vim.g.python3_host_prog = "/home/zp252136/CIAO-AI-MAIN/fortran-ml-interface/BUILD/extern/venv-py3123/bin/python3"
+if vim.env.VIRTUAL_ENV then
+	vim.g.python3_host_prog = vim.env.VIRTUAL_ENV .. "/bin/python3"
+else
+	vim.g.python3_host_prog = "/usr/bin/python3"
+end
 
 -----------------------------
 -- Keymaps

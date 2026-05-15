@@ -86,7 +86,7 @@ return {
 			button.opts.hl_shortcut = "DashboardShortcut"
 		end
 
-		function get_vertical_padding()
+		local function get_vertical_padding()
 			local height = vim.fn.winheight(0)
 			local header_height = type(header.val) == "table" and #header.val or 6
 			local buttons_height = #dashboard.section.buttons.val
