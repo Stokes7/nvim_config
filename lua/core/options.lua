@@ -1,3 +1,4 @@
+vim.opt.title = false
 vim.opt.number = true -- Make line numbers default (default: false)
 vim.opt.relativenumber = true -- Set relative numbered lines (default: false)
 vim.opt.wrap = false -- Display lines as one long line (default: true)
