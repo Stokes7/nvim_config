@@ -9,6 +9,8 @@
 --
 if vim.env.VIRTUAL_ENV then
 	vim.g.python3_host_prog = vim.env.VIRTUAL_ENV .. "/bin/python3"
+elseif vim.env.CONDA_PREFIX then
+	vim.g.python3_host_prog = vim.env.CONDA_PREFIX .. "/bin/python3"
 else
 	vim.g.python3_host_prog = "/usr/bin/python3"
 end
@@ -82,6 +84,7 @@ require("lazy").setup({
 	require("plugins.typr"),
 	require("plugins.codeium"),
 	require("plugins.molten"),
+	require("plugins.markdown-preview"),
 	require("plugins.csvview"),
 	require("plugins.image"),
 	--require("plugins.smart-splits"),
