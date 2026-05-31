@@ -1,10 +1,17 @@
-return { -- Highlight, edit, and navigate code
+return {
 	"nvim-treesitter/nvim-treesitter",
 	event = { "BufReadPost", "BufNewFile" },
 	build = ":TSUpdate",
-	main = "nvim-treesitter.configs",
+	main = "nvim-treesitter",
 	opts = {
-		ensure_installed = {
+		-- Solo install_dir está soportado en el nuevo setup()
+		-- Los parsers se instalan via :TSInstall o programáticamente abajo
+	},
+	config = function(_, opts)
+		require("nvim-treesitter").setup(opts)
+
+		-- Equivalent to the old ensure_installed
+		local langs = {
 			"bash",
 			"c",
 			"diff",
@@ -25,13 +32,7 @@ return { -- Highlight, edit, and navigate code
 			"latex",
 			"bibtex",
 			"json",
-		},
-		auto_install = true,
-		highlight = {
-			enable = true,
-			-- deja false para la mayoría; Ruby necesita regex extra si usas indent de Vim
-			additional_vim_regex_highlighting = { "ruby" },
-		},
-		indent = { enable = true, disable = { "ruby" } },
-	},
+		}
+		require("nvim-treesitter").install(langs)
+	end,
 }
