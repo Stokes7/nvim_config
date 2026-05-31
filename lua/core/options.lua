@@ -50,18 +50,24 @@ vim.opt.virtualedit = { "block", "onemore" }
 vim.opt.clipboard = "unnamedplus"
 if vim.env.SSH_CONNECTION then
 	vim.g.clipboard = {
-		name = "OSC 52",
+		name = "xsel+OSC52",
 		copy = {
-			["+"] = require("vim.ui.clipboard.osc52").copy("+"),
-			["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+			["+"] = function(lines, regtype)
+				local job = vim.fn.jobstart({ "xsel", "--clipboard", "--input" }, { stdin = "pipe" })
+				vim.fn.chansend(job, lines)
+				vim.fn.chanclose(job, "stdin")
+				require("vim.ui.clipboard.osc52").copy("+")(lines, regtype)
+			end,
+			["*"] = function(lines, regtype)
+				local job = vim.fn.jobstart({ "xsel", "--primary", "--input" }, { stdin = "pipe" })
+				vim.fn.chansend(job, lines)
+				vim.fn.chanclose(job, "stdin")
+				require("vim.ui.clipboard.osc52").copy("*")(lines, regtype)
+			end,
 		},
 		paste = {
-			["+"] = function()
-				return { vim.split(vim.fn.getreg("+"), "\n"), vim.fn.getregtype("+") }
-			end,
-			["*"] = function()
-				return { vim.split(vim.fn.getreg("*"), "\n"), vim.fn.getregtype("*") }
-			end,
+			["+"] = { "xsel", "--clipboard", "--output" },
+			["*"] = { "xsel", "--primary", "--output" },
 		},
 	}
 end

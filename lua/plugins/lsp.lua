@@ -203,6 +203,7 @@ return {
 			--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
 
 			local cuda_home = vim.env.CUDA_HOME
+				or "/cvmfs/software.hpc.rwth.de/Linux/RH9/x86_64/intel/sapphirerapids/software/CUDA/12.8.0"
 
 			local servers = {
 				-- gopls = {},
