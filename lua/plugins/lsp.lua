@@ -140,7 +140,10 @@ return {
 					-- code, if the language server you are using supports them
 					--
 					-- This may be unwanted, since they displace some of your code
-					if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
+					if
+						client
+						and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf)
+					then
 						map("<leader>uh", function()
 							vim.lsp.inlay_hint.enable(
 								not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }),
@@ -317,15 +320,15 @@ return {
 			-- You can add other tools here that you want Mason to install
 			-- for you, so that they are available from within Neovim.
 			local ensure_installed = vim.tbl_keys(servers or {})
-				vim.list_extend(ensure_installed, {
-					"stylua",
-					"shfmt",
-					"isort",
-					"ruff",
-					"clang-format",
-					"fprettify",
-					"checkmake",
-				})
+			vim.list_extend(ensure_installed, {
+				"stylua",
+				"shfmt",
+				"isort",
+				"ruff",
+				"clang-format",
+				"fprettify",
+				"checkmake",
+			})
 			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
 			require("mason-lspconfig").setup({

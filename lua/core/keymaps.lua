@@ -45,6 +45,9 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz", opts)
 vim.keymap.set("n", "n", "nzzzv", opts)
 vim.keymap.set("n", "N", "Nzzzv", opts)
 
+-- Clear search highlight
+vim.keymap.set("n", "<leader>h", "<cmd>nohlsearch<CR>", opts)
+
 -----------------------------
 -- Diagnostics Toggle
 -----------------------------
