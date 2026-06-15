@@ -23,7 +23,6 @@ return { -- Autocompletion
 		"hrsh7th/cmp-nvim-lsp",
 		"hrsh7th/cmp-buffer",
 		"hrsh7th/cmp-path",
-
 		-- Adds a number of user-friendly snippets
 		"rafamadriz/friendly-snippets",
 	},
@@ -65,7 +64,7 @@ return { -- Autocompletion
 		vim.g.cmp_enabled = false
 		vim.g.cmp_lsp_enabled = false
 		vim.g.cmp_buffer_enabled = false
-		vim.g.cmp_path_enabled = false
+		vim.g.cmp_path_enabled = true
 		vim.g.cmp_snippet_enabled = false
 
 		local function get_sources()
@@ -180,6 +179,5 @@ return { -- Autocompletion
 			cmp.abort()
 			print("cmp Buffer: " .. (vim.g.cmp_buffer_enabled and "ON" or "OFF"))
 		end, { desc = "Toggle cmp Buffer source" })
-
 	end,
 }
