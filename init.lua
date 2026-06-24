@@ -88,6 +88,7 @@ require("lazy").setup({
 	require("plugins.markdown-preview"),
 	require("plugins.csvview"),
 	require("plugins.image"),
+	require("plugins.neoscroll"),
 	--require("plugins.smart-splits"),
 	-- require("plugins.vimtex"),
 	-- require("plugins.nvchadui"),
