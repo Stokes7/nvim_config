@@ -2,16 +2,9 @@ return {
 	"nvim-treesitter/nvim-treesitter",
 	event = { "BufReadPost", "BufNewFile" },
 	build = ":TSUpdate",
-	main = "nvim-treesitter",
+	main = "nvim-treesitter.configs",
 	opts = {
-		-- Solo install_dir está soportado en el nuevo setup()
-		-- Los parsers se instalan via :TSInstall o programáticamente abajo
-	},
-	config = function(_, opts)
-		require("nvim-treesitter").setup(opts)
-
-		-- Equivalent to the old ensure_installed
-		local langs = {
+		ensure_installed = {
 			"bash",
 			"c",
 			"diff",
@@ -32,7 +25,9 @@ return {
 			"latex",
 			"bibtex",
 			"json",
-		}
-		require("nvim-treesitter").install(langs)
-	end,
+		},
+		highlight = {
+			enable = true,
+		},
+	},
 }
