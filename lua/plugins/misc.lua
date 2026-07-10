@@ -1,23 +1,6 @@
 -- Standalone plugins with less than 10 lines of config go here
 return {
 	{
-		-- Tmux & split window navigation
-		"christoomey/vim-tmux-navigator",
-		cmd = {
-			"TmuxNavigateLeft", "TmuxNavigateDown",
-			"TmuxNavigateUp", "TmuxNavigateRight", "TmuxNavigatePrevious",
-		},
-		keys = {
-			{ "<C-h>", "<cmd>TmuxNavigateLeft<CR>",  desc = "Window left" },
-			{ "<C-j>", "<cmd>TmuxNavigateDown<CR>",  desc = "Window down" },
-			{ "<C-k>", "<cmd>TmuxNavigateUp<CR>",    desc = "Window up" },
-			{ "<C-l>", "<cmd>TmuxNavigateRight<CR>", desc = "Window right" },
-		},
-		init = function()
-			vim.g.tmux_navigator_no_mappings = 1
-		end,
-	},
-	{
 		-- Detect tabstop and shiftwidth automatically
 		"tpope/vim-sleuth",
 	},
@@ -56,6 +39,7 @@ return {
 				{ "<leader>x", group = "delete", icon = { icon = "󰆴 ", color = "red" } },
 				{ "<leader>a", group = "autocomplete / AI", icon = { icon = " ", color = "purple" } },
 				{ "<leader>c", group = "code / lsp", icon = { icon = " ", color = "azure" } },
+				{ "<leader>o", group = "obsidian", icon = { icon = "󱋩 ", color = "purple" } },
 			})
 		end,
 	},

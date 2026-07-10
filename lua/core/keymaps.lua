@@ -116,6 +116,14 @@ vim.keymap.set("n", "<Right>", ":vertical resize +2<CR>", opts)
 -- vim.keymap.set("n", "<C-l>", ":wincmd l<CR>", opts)
 
 -----------------------------
+-- Window Navigation (works with neo-tree)
+-----------------------------
+vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Window left" })
+vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Window down" })
+vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Window up" })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Window right" })
+
+-----------------------------
 -- Buffer Navigation
 -----------------------------
 vim.keymap.set("n", "H", "<cmd>bprevious<CR>", { desc = "Previous buffer" })
