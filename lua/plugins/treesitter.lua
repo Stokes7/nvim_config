@@ -8,32 +8,33 @@ return {
 		-- Solo install_dir está soportado en el nuevo setup()
 		-- Los parsers se instalan via :TSInstall o programáticamente abajo
 	},
-	config = function(_, opts)
-		require("nvim-treesitter").setup(opts)
-
-		-- Equivalent to the old ensure_installed
-		local langs = {
-			"bash",
-			"c",
-			"diff",
-			"html",
-			"lua",
-			"luadoc",
-			"markdown",
-			"markdown_inline",
-			"query",
-			"vim",
-			"vimdoc",
-			"fortran",
-			"cpp",
-			"cmake",
-			"make",
-			"python",
-			"typst",
-			"latex",
-			"bibtex",
-			"json",
-		}
-		require("nvim-treesitter").install(langs)
+	config = function()
+		require("nvim-treesitter.configs").setup({
+			ensure_installed = {
+				"bash",
+				"c",
+				"diff",
+				"html",
+				"lua",
+				"luadoc",
+				"markdown",
+				"markdown_inline",
+				"query",
+				"vim",
+				"vimdoc",
+				"fortran",
+				"cpp",
+				"cmake",
+				"make",
+				"python",
+				"typst",
+				"latex",
+				"bibtex",
+				"json",
+			},
+			highlight = {
+				enable = true,
+			},
+		})
 	end,
 }
