@@ -90,6 +90,7 @@ require("lazy").setup({
 	require("plugins.image"),
 	require("plugins.obsidian"),
 	require("plugins.neoscroll"),
+	require("plugins.jupynvim"),
 	--require("plugins.smart-splits"),
 	-- require("plugins.vimtex"),
 	-- require("plugins.nvchadui"),

@@ -30,7 +30,6 @@ return {
 				{ "<leader>f", group = "file", icon = { icon = "󰈞 ", color = "blue" } },
 				{ "<leader>g", group = "git", icon = { icon = " ", color = "orange" } },
 				{ "<leader>m", group = "markup", icon = { icon = " ", color = "cyan" } },
-				{ "<leader>e", group = "explorer", icon = { icon = "󰙅 ", color = "green" } },
 				{ "<leader>n", group = "neo-tree", icon = { icon = "󰙅 ", color = "green" } },
 				{ "<leader>s", group = "search", icon = { icon = " ", color = "blue" } },
 				{ "<leader>t", group = "tab", icon = { icon = "󰓩 ", color = "purple" } },

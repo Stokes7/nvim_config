@@ -5,7 +5,7 @@ return {
 	config = function()
 		require("typst-preview").setup({
 			debug = false,
-			open_cmd = nil,
+			open_cmd = 'zen-browser --private-window %s',
 			port = 0,
 			invert_colors = "never",
 			follow_cursor = true,

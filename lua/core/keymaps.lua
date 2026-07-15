@@ -314,3 +314,34 @@ vim.keymap.set("n", "<leader>vv", function()
 		vim.cmd(string.format("CsvViewEnable header_lnum=%d", n))
 	end)
 end, { desc = "CSV: enable and choose header line" })
+
+-----------------------------
+-- Jupynvim (Jupyter Notebooks)
+-----------------------------
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "ipynb",
+	callback = function(args)
+		local buf = args.buf
+
+		-- Run cell under cursor
+		vim.keymap.set("n", "<leader>jj", "<cmd>JupynvimRunCell<CR>", { buffer = buf, desc = "Run cell under cursor" })
+
+		-- Run all cells in order
+		vim.keymap.set("n", "<leader>ja", "<cmd>JupynvimRunAll<CR>", { buffer = buf, desc = "Run all cells" })
+
+		-- Pick a Jupyter kernel
+		vim.keymap.set("n", "<leader>jk", "<cmd>JupynvimKernel<CR>", { buffer = buf, desc = "Pick a kernel spec" })
+
+		-- Restart active kernel
+		vim.keymap.set("n", "<leader>jR", "<cmd>JupynvimRestart<CR>", { buffer = buf, desc = "Restart active kernel" })
+
+		-- Clear outputs from all cells
+		vim.keymap.set("n", "<leader>jc", "<cmd>JupynvimClearOutputs<CR>", { buffer = buf, desc = "Clear all outputs" })
+
+		-- Clear output from current cell
+		vim.keymap.set("n", "<leader>jC", "<cmd>JupynvimClearCellOutput<CR>", { buffer = buf, desc = "Clear current cell output" })
+
+		-- Run current cell
+		vim.keymap.set("n", "<S-Enter>", "<cmd>JupynvimRunCell<CR>", { buffer = buf, desc = "Run cell" })
+	end,
+})
