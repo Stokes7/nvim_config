@@ -12,6 +12,7 @@ vim.opt.tabstop = 4 -- Insert n spaces for a tab (default: 8)
 vim.opt.softtabstop = 4 -- Number of spaces that a tab counts for while performing editing operations (default: 0)
 vim.opt.expandtab = true -- Convert tabs to spaces (default: false)
 vim.opt.scrolloff = 4 -- Minimal number of screen lines to keep above and below the cursor (default: 0)
+vim.opt.smoothscroll = true -- Scroll by screen line instead of jumping a whole wrapped line (default: false)
 vim.opt.sidescrolloff = 8 -- Minimal number of screen columns either side of cursor if wrap is `false` (default: 0)
 vim.opt.cursorline = false -- Highlight the current line (default: false)
 vim.opt.splitbelow = true -- Force all horizontal splits to go below current window (default: false)
@@ -49,6 +50,43 @@ vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "markdown" },
 	callback = function()
 		vim.opt_local.conceallevel = 2
+	end,
+})
+
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "tex" },
+	callback = function()
+		vim.opt_local.conceallevel = 2
+		vim.opt_local.wrap = true -- useful for LaTeX prose
+	end,
+})
+
+-- Automatically open PDF files in default browser (Zen Browser) in a private window
+vim.api.nvim_create_autocmd("BufReadCmd", {
+	pattern = { "*.pdf", "*.PDF" },
+	callback = function(args)
+		local filepath = vim.fn.fnamemodify(args.file, ":p")
+		local cmd = vim.fn.executable("zen-browser") == 1 and { "zen-browser", "--private-window", filepath }
+			or { "xdg-open", filepath }
+
+		vim.fn.jobstart(cmd, { detach = true })
+		vim.notify(
+			"Opening in Zen Browser (private window): " .. vim.fn.fnamemodify(filepath, ":t"),
+			vim.log.levels.INFO
+		)
+
+		-- Safely remove the dummy/empty buffer in Neovim
+		vim.schedule(function()
+			if vim.api.nvim_buf_is_valid(args.buf) then
+				local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+				if #bufs <= 1 then
+					vim.cmd("enew | silent! bdelete #")
+				else
+					vim.cmd("silent! bdelete " .. args.buf)
+				end
+			end
+		end)
 	end,
 })
 vim.opt.formatoptions:remove({ "c", "r", "o" }) -- Don't insert the current comment leader automatically for auto-wrapping comments using 'textwidth', hitting <Enter> in insert mode, or hitting 'o' or 'O' in normal mode. (default: 'croql')

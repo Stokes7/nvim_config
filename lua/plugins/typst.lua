@@ -1,11 +1,11 @@
 return {
 	"chomosuke/typst-preview.nvim",
-	version = "1.*", -- puedes fijar versión si quieres
-	ft = "typst", -- carga solo cuando abras archivos .typ
+	version = "1.*", -- pin version if desired
+	ft = "typst", -- only load when opening .typ files
 	config = function()
 		require("typst-preview").setup({
 			debug = false,
-			open_cmd = 'zen-browser --private-window %s',
+			open_cmd = "zen-browser --private-window %s",
 			port = 0,
 			invert_colors = "never",
 			follow_cursor = true,

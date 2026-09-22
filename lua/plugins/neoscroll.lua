@@ -1,9 +1,7 @@
 return {
 	"karb94/neoscroll.nvim",
 	opts = {
-		mappings = { -- Keys to be mapped to their corresponding default scrolling animation
-			"<C-u>",
-			"<C-d>",
+		mappings = { -- <C-u>/<C-d> are bound below so they can recenter afterwards
 			"<C-b>",
 			"<C-f>",
 			"<C-y>",
@@ -19,11 +17,25 @@ return {
 		duration_multiplier = 0.7, -- Global duration multiplier
 		easing = "linear", -- Default easing function
 		pre_hook = nil, -- Function to run before the scrolling animation starts
-		post_hook = nil, -- Function to run after the scrolling animation ends
+		post_hook = function(info)
+			if info == "center" then
+				vim.cmd("normal! zz")
+			end
+		end,
 		performance_mode = false, -- Disable "Performance Mode" on all buffers.
 		ignored_events = { -- Events ignored while scrolling
 			"WinScrolled",
 			"CursorMoved",
 		},
 	},
+	config = function(_, opts)
+		local neoscroll = require("neoscroll")
+		neoscroll.setup(opts)
+		vim.keymap.set("n", "<C-d>", function()
+			neoscroll.ctrl_d({ info = "center" })
+		end, { silent = true, desc = "Scroll down and center" })
+		vim.keymap.set("n", "<C-u>", function()
+			neoscroll.ctrl_u({ info = "center" })
+		end, { silent = true, desc = "Scroll up and center" })
+	end,
 }

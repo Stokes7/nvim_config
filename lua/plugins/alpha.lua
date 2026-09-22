@@ -65,6 +65,18 @@ return {
 
 		local header = load_random_header() or dashboard.section.header
 
+		local function get_vertical_padding()
+			local height = vim.fn.winheight(0)
+			local header_height = type(header.val) == "table" and #header.val or 6
+			local buttons_height = #dashboard.section.buttons.val
+			local footer_height = 4
+
+			local content_height = header_height + buttons_height + footer_height + 4
+			local padding = math.floor((height - content_height) / 2)
+
+			return math.max(padding, 1)
+		end
+
 		dashboard.section.buttons.val = {
 			dashboard.button("w", "󰏘  Change header image", function()
 				local new_header = load_random_header()
@@ -84,18 +96,6 @@ return {
 		for _, button in ipairs(dashboard.section.buttons.val) do
 			button.opts.hl = "DashboardButton"
 			button.opts.hl_shortcut = "DashboardShortcut"
-		end
-
-		local function get_vertical_padding()
-			local height = vim.fn.winheight(0)
-			local header_height = type(header.val) == "table" and #header.val or 6
-			local buttons_height = #dashboard.section.buttons.val
-			local footer_height = 4
-
-			local content_height = header_height + buttons_height + footer_height + 4
-			local padding = math.floor((height - content_height) / 2)
-
-			return math.max(padding, 1)
 		end
 
 		dashboard.config.layout = {

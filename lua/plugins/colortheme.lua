@@ -24,7 +24,7 @@ return {
 			vim.api.nvim_set_hl(0, "Visual", { bg = bg, fg = fg, bold = false })
 			vim.api.nvim_set_hl(0, "VisualNOS", { bg = bg, fg = fg, bold = false })
 
-			-- Telescope selection (usa el mismo color)
+			-- Telescope selection (uses the same color)
 			vim.api.nvim_set_hl(0, "TelescopeSelection", {
 				bg = bg,
 				fg = fg,
@@ -64,6 +64,6 @@ return {
 			set_strong_visual()
 		end
 
-		vim.keymap.set("n", "<leader>bg", toggle_transparency, { noremap = true, silent = true })
+		vim.keymap.set("n", "<leader>ut", toggle_transparency, { silent = true, desc = "Toggle transparency" })
 	end,
 }

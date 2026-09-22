@@ -184,11 +184,26 @@ return {
 
 				vim.keymap.set("n", "<leader>ji", molten_init, { buffer = buf, desc = "Molten Init Kernel" })
 				vim.keymap.set("n", "<leader>jl", "<cmd>MoltenEvaluateLine<CR>", { buffer = buf, desc = "Run Line" })
-				vim.keymap.set("n", "<leader>jr", "<cmd>MoltenReevaluateCell<CR>", { buffer = buf, desc = "Re-run Active Cell" })
-				vim.keymap.set("n", "<leader>jo", "<cmd>noautocmd MoltenEnterOutput<CR>", { buffer = buf, desc = "Open Output" })
+				vim.keymap.set(
+					"n",
+					"<leader>jr",
+					"<cmd>MoltenReevaluateCell<CR>",
+					{ buffer = buf, desc = "Re-run Active Cell" }
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>jo",
+					"<cmd>noautocmd MoltenEnterOutput<CR>",
+					{ buffer = buf, desc = "Open Output" }
+				)
 				vim.keymap.set("n", "<leader>jh", "<cmd>MoltenHideOutput<CR>", { buffer = buf, desc = "Hide Output" })
 				vim.keymap.set("n", "<leader>jx", "<cmd>MoltenRestart<CR>", { buffer = buf, desc = "Restart Kernel" })
-				vim.keymap.set("n", "<leader>jk", "<cmd>MoltenInterrupt<CR>", { buffer = buf, desc = "Interrupt Kernel" })
+				vim.keymap.set(
+					"n",
+					"<leader>jk",
+					"<cmd>MoltenInterrupt<CR>",
+					{ buffer = buf, desc = "Interrupt Kernel" }
+				)
 
 				vim.keymap.set("n", "<leader>jj", run_cell, { buffer = buf, desc = "Run Current Cell" })
 				vim.keymap.set("n", "<S-Enter>", run_and_next, { buffer = buf, desc = "Run Cell and Go Next" })
@@ -197,12 +212,37 @@ return {
 				vim.keymap.set("n", "]j", goto_next_cell, { buffer = buf, desc = "Next Cell" })
 				vim.keymap.set("n", "[j", goto_prev_cell, { buffer = buf, desc = "Previous Cell" })
 
-				vim.keymap.set("v", "<leader>jv", ":<C-u>MoltenEvaluateVisual<CR>gv", { buffer = buf, desc = "Run Selection" })
-				vim.keymap.set("n", "<leader>je", "<cmd>MoltenEvaluateOperator<CR>", { buffer = buf, desc = "Operator Eval" })
+				vim.keymap.set(
+					"v",
+					"<leader>jv",
+					":<C-u>MoltenEvaluateVisual<CR>gv",
+					{ buffer = buf, desc = "Run Selection" }
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>je",
+					"<cmd>MoltenEvaluateOperator<CR>",
+					{ buffer = buf, desc = "Operator Eval" }
+				)
 
-				vim.keymap.set("n", "<leader>jc", clear_current_cell_output, { buffer = buf, desc = "Clear Current Cell Output" })
-				vim.keymap.set("n", "<leader>jC", clear_all_cells_outputs, { buffer = buf, desc = "Clear All Cells Outputs" })
-				vim.keymap.set("n", "<leader>jR", restart_and_clear_all, { buffer = buf, desc = "Restart Kernel and Clear Outputs" })
+				vim.keymap.set(
+					"n",
+					"<leader>jc",
+					clear_current_cell_output,
+					{ buffer = buf, desc = "Clear Current Cell Output" }
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>jC",
+					clear_all_cells_outputs,
+					{ buffer = buf, desc = "Clear All Cells Outputs" }
+				)
+				vim.keymap.set(
+					"n",
+					"<leader>jR",
+					restart_and_clear_all,
+					{ buffer = buf, desc = "Restart Kernel and Clear Outputs" }
+				)
 			end,
 		})
 	end,

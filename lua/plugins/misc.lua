@@ -23,14 +23,13 @@ return {
 			wk.setup({})
 			wk.add({
 				{ "<leader>b", group = "buffer", icon = { icon = "󰓩 ", color = "cyan" } },
-				{ "<leader>l", group = "leetcode", icon = { icon = "󰛱 ", color = "yellow" } },
+				{ "<leader>l", group = "latex", icon = { icon = " ", color = "green" } },
 				{ "<leader>v", group = "csv", icon = { icon = " ", color = "green" } },
 				{ "<leader>j", group = "jupyter", icon = { icon = "󱗕 ", color = "orange" } },
 				{ "<leader>d", group = "diagnostics", icon = { icon = " ", color = "red" } },
 				{ "<leader>f", group = "file", icon = { icon = "󰈞 ", color = "blue" } },
 				{ "<leader>g", group = "git", icon = { icon = " ", color = "orange" } },
 				{ "<leader>m", group = "markup", icon = { icon = " ", color = "cyan" } },
-				{ "<leader>n", group = "neo-tree", icon = { icon = "󰙅 ", color = "green" } },
 				{ "<leader>s", group = "search", icon = { icon = " ", color = "blue" } },
 				{ "<leader>t", group = "tab", icon = { icon = "󰓩 ", color = "purple" } },
 				{ "<leader>u", group = "toggle / ui", icon = { icon = " ", color = "yellow" } },
@@ -38,7 +37,6 @@ return {
 				{ "<leader>x", group = "delete", icon = { icon = "󰆴 ", color = "red" } },
 				{ "<leader>a", group = "autocomplete / AI", icon = { icon = " ", color = "purple" } },
 				{ "<leader>c", group = "code / lsp", icon = { icon = " ", color = "azure" } },
-				{ "<leader>o", group = "obsidian", icon = { icon = "󱋩 ", color = "purple" } },
 			})
 		end,
 	},
@@ -57,11 +55,9 @@ return {
 		opts = { signs = false },
 	},
 	{
-		-- High-performance color highlighter
-		"norcalli/nvim-colorizer.lua",
+		-- High-performance color highlighter (norcalli's is unmaintained since 2024)
+		"catgoose/nvim-colorizer.lua",
 		event = { "BufReadPre", "BufNewFile" },
-		config = function()
-			require("colorizer").setup()
-		end,
+		opts = {},
 	},
 }
