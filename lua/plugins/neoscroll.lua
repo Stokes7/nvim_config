@@ -109,10 +109,10 @@ return {
 		neoscroll.setup(opts)
 
 		vim.keymap.set("n", "<C-d>", function()
-			neoscroll.ctrl_d({ info = "center" })
+			neoscroll.ctrl_d({ duration = 250, info = "center" })
 		end, { silent = true, desc = "Scroll down and center" })
 		vim.keymap.set("n", "<C-u>", function()
-			neoscroll.ctrl_u({ info = "center" })
+			neoscroll.ctrl_u({ duration = 250, info = "center" })
 		end, { silent = true, desc = "Scroll up and center" })
 
 		-- Safety net: if an animation is interrupted (<C-c>, a mapping that

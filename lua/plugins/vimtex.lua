@@ -26,6 +26,8 @@ return {
 
 		-- QoL
 		vim.g.vimtex_quickfix_mode = 0
+		-- Disable syntax conceal so formulas and symbols are displayed as raw LaTeX
+		vim.g.vimtex_syntax_conceal_disable = 1
 		--vim.g.maplocalleader = "\\"
 	end,
 }

@@ -155,6 +155,8 @@ vim.keymap.set("n", "<leader>uw", function()
 	vim.notify("Wrap " .. (vim.wo.wrap and "ON" or "OFF"))
 end, { desc = "Toggle line wrap" })
 
+vim.keymap.set("n", "<leader>um", "<cmd>RenderMarkdown toggle<CR>", { desc = "Toggle Markdown rendering" })
+
 -- Smart movement when wrap is enabled: move by visual line, not logical line.
 -- With a count (3j) we keep logical lines so relativenumber jumps stay correct.
 local function wrapped(visual_key, plain_key)
@@ -244,6 +246,64 @@ vim.api.nvim_create_autocmd("FileType", {
 	callback = function(args)
 		local buf = args.buf
 
+		-- Enable runtime typst compiler for :make
+		pcall(vim.cmd.compiler, "typst")
+
+		-- Compile current file to PDF directly using typst CLI
+		vim.keymap.set("n", "<leader>mc", function()
+			local file = vim.api.nvim_buf_get_name(buf)
+			if file == "" then
+				vim.notify("Save the file first before compiling", vim.log.levels.WARN)
+				return
+			end
+			if vim.bo[buf].modified then
+				vim.cmd("silent! write")
+			end
+			local pdf = vim.fn.expand("%:p:r") .. ".pdf"
+			local err_lines = {}
+			vim.notify("Compiling " .. vim.fn.fnamemodify(file, ":t") .. "...", vim.log.levels.INFO)
+			vim.fn.jobstart({ "typst", "compile", "--diagnostic-format", "short", file, pdf }, {
+				stdout_buffered = true,
+				stderr_buffered = true,
+				on_stderr = function(_, data)
+					for _, line in ipairs(data) do
+						if line ~= "" then
+							table.insert(err_lines, line)
+						end
+					end
+				end,
+				on_exit = function(_, code)
+					if code == 0 then
+						vim.fn.setqflist({}, "r")
+						vim.cmd("cclose")
+						vim.notify("Typst: " .. vim.fn.fnamemodify(pdf, ":t") .. " compiled successfully!", vim.log.levels.INFO)
+					else
+						vim.fn.setqflist({}, "r", { title = "Typst Errors", lines = err_lines })
+						vim.cmd("copen")
+						vim.notify("Typst: compilation failed! Check quickfix list.", vim.log.levels.ERROR)
+					end
+				end,
+			})
+		end, { buffer = buf, desc = "Compile Typst document (PDF)" })
+
+		-- Watch current file in background using typst watch
+		local watch_job = nil
+		vim.keymap.set("n", "<leader>mw", function()
+			local file = vim.api.nvim_buf_get_name(buf)
+			if file == "" then
+				vim.notify("Save the file first before watching", vim.log.levels.WARN)
+				return
+			end
+			if watch_job then
+				vim.fn.jobstop(watch_job)
+				watch_job = nil
+				vim.notify("Typst watch stopped", vim.log.levels.INFO)
+				return
+			end
+			watch_job = vim.fn.jobstart({ "typst", "watch", file }, { detach = true })
+			vim.notify("Typst watch started for " .. vim.fn.fnamemodify(file, ":t"), vim.log.levels.INFO)
+		end, { buffer = buf, desc = "Toggle background typst watch" })
+
 		-- Typst preview commands
 		vim.keymap.set(
 			"n",
@@ -280,6 +340,63 @@ vim.api.nvim_create_autocmd("FileType", {
 		)
 	end,
 })
+
+-- Global Typst User Commands
+local typst_global_watch_job = nil
+
+vim.api.nvim_create_user_command("TypstCompile", function()
+	local buf = vim.api.nvim_get_current_buf()
+	local file = vim.api.nvim_buf_get_name(buf)
+	if file == "" or not file:match("%.typ$") then
+		vim.notify("Open a .typ file first", vim.log.levels.WARN)
+		return
+	end
+	if vim.bo[buf].modified then
+		vim.cmd("silent! write")
+	end
+	local pdf = vim.fn.expand("%:p:r") .. ".pdf"
+	local err_lines = {}
+	vim.notify("Compiling " .. vim.fn.fnamemodify(file, ":t") .. "...", vim.log.levels.INFO)
+	vim.fn.jobstart({ "typst", "compile", "--diagnostic-format", "short", file, pdf }, {
+		stdout_buffered = true,
+		stderr_buffered = true,
+		on_stderr = function(_, data)
+			for _, line in ipairs(data) do
+				if line ~= "" then
+					table.insert(err_lines, line)
+				end
+			end
+		end,
+		on_exit = function(_, code)
+			if code == 0 then
+				vim.fn.setqflist({}, "r")
+				vim.cmd("cclose")
+				vim.notify("Typst: " .. vim.fn.fnamemodify(pdf, ":t") .. " compiled successfully!", vim.log.levels.INFO)
+			else
+				vim.fn.setqflist({}, "r", { title = "Typst Errors", lines = err_lines })
+				vim.cmd("copen")
+				vim.notify("Typst: compilation failed! Check quickfix list.", vim.log.levels.ERROR)
+			end
+		end,
+	})
+end, { desc = "Compile current Typst document to PDF" })
+
+vim.api.nvim_create_user_command("TypstWatch", function()
+	local buf = vim.api.nvim_get_current_buf()
+	local file = vim.api.nvim_buf_get_name(buf)
+	if file == "" or not file:match("%.typ$") then
+		vim.notify("Open a .typ file first", vim.log.levels.WARN)
+		return
+	end
+	if typst_global_watch_job then
+		vim.fn.jobstop(typst_global_watch_job)
+		typst_global_watch_job = nil
+		vim.notify("Typst watch stopped", vim.log.levels.INFO)
+		return
+	end
+	typst_global_watch_job = vim.fn.jobstart({ "typst", "watch", file }, { detach = true })
+	vim.notify("Typst watch started for " .. vim.fn.fnamemodify(file, ":t"), vim.log.levels.INFO)
+end, { desc = "Toggle background typst watch compiler" })
 
 -----------------------------
 -- VimTeX Keymaps (LaTeX only)

@@ -85,6 +85,7 @@ require("lazy").setup({
 	require("plugins.copilot"),
 	require("plugins.molten"),
 	require("plugins.markdown-preview"),
+	require("plugins.render-markdown"),
 	require("plugins.csvview"),
 	require("plugins.image"),
 	require("plugins.neoscroll"),

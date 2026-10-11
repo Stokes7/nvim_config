@@ -226,6 +226,7 @@ return {
 				},
 
 				tinymist = {
+					root_markers = { "typst.toml", ".git" },
 					settings = {
 						formatterMode = "typstyle",
 						exportPdf = "onSave",
@@ -256,7 +257,11 @@ return {
 				vim.lsp.config(name, config)
 			end
 
-			local ensure_installed = vim.tbl_keys(servers)
+			-- Use system package for tinymist (Arch package is v0.15 matching typst 0.15)
+			local ensure_installed = vim.tbl_filter(function(name)
+				return name ~= "tinymist"
+			end, vim.tbl_keys(servers))
+
 			vim.list_extend(ensure_installed, {
 				"stylua",
 				"shfmt",
@@ -274,6 +279,9 @@ return {
 				-- stylua is a formatter, none-ls already runs it: no LSP client needed.
 				automatic_enable = { exclude = { "stylua" } },
 			})
+
+			-- Ensure tinymist is always enabled
+			vim.lsp.enable("tinymist")
 		end,
 	},
 }
