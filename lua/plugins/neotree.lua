@@ -52,7 +52,7 @@ return {
 			desc = "Explorer",
 		},
 		{
-			"<leader>wf",
+			"<leader>E",
 			function()
 				redraw_safely(function()
 					vim.cmd("Neotree toggle float")
@@ -62,7 +62,7 @@ return {
 			desc = "Floating explorer",
 		},
 		{
-			"<leader>ngs",
+			"<leader>gn",
 			function()
 				redraw_safely(function()
 					vim.cmd("Neotree float git_status")

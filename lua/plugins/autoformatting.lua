@@ -30,7 +30,7 @@ return {
 			sources = {
 				diagnostics.checkmake, -- Makefiles
 
-				formatting.prettier.with({
+				formatting.prettierd.with({
 					filetypes = { "html", "json", "yaml", "markdown" },
 				}),
 
@@ -50,7 +50,7 @@ return {
 
 				-- Fortran
 				formatting.fprettify.with({
-					filetypes = { "fortran" }, -- o { "fortran", "f90", "f95" } si los tienes así
+					filetypes = { "fortran" }, -- or { "fortran", "f90", "f95" } if configured that way
 				}),
 			},
 		})

@@ -2,6 +2,9 @@ return {
 	"lervag/vimtex",
 	ft = "tex",
 	init = function()
+		-- Disable default VimTeX keymaps (we define our own in keymaps.lua)
+		vim.g.vimtex_mappings_enabled = 0
+
 		-- Viewer + sync
 		vim.g.vimtex_view_method = "zathura"
 		vim.g.vimtex_compiler_progname = "nvr" -- enables inverse search to the *current* Neovim
@@ -16,8 +19,8 @@ return {
 				"-pdf",
 				"-interaction=nonstopmode",
 				"-synctex=1",
-				"-auxdir=src", -- ← auxiliares a ./src
-				-- "-outdir=."    -- opcional, por defecto ya es el directorio actual
+				"-auxdir=build", -- auxiliary files to ./build
+				-- "-outdir=."    -- optional, current directory is default
 			},
 		}
 

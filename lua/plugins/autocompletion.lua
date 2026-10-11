@@ -60,12 +60,13 @@ return { -- Autocompletion
 			TypeParameter = "󰊄",
 		}
 
-		-- Estados globales
-		vim.g.cmp_enabled = false
-		vim.g.cmp_lsp_enabled = false
+		-- Global source flags
+		vim.g.cmp_enabled = true
+		vim.g.cmp_lsp_enabled = true
 		vim.g.cmp_buffer_enabled = false
 		vim.g.cmp_path_enabled = true
 		vim.g.cmp_snippet_enabled = false
+		vim.g.cmp_vimtex_enabled = true
 
 		local function get_sources()
 			local sources = {}
@@ -81,6 +82,9 @@ return { -- Autocompletion
 			end
 			if vim.g.cmp_path_enabled then
 				table.insert(sources, { name = "path" })
+			end
+			if vim.g.cmp_vimtex_enabled then
+				table.insert(sources, { name = "vimtex" })
 			end
 
 			return sources
@@ -101,7 +105,13 @@ return { -- Autocompletion
 					["<C-j>"] = cmp.mapping.select_next_item(),
 					["<C-k>"] = cmp.mapping.select_prev_item(),
 					["<CR>"] = cmp.mapping.confirm({ select = true }),
-					["<C-c>"] = cmp.mapping.complete({}),
+					["<C-c>"] = cmp.mapping(function()
+						if cmp.visible() then
+							cmp.abort()
+						else
+							cmp.complete()
+						end
+					end, { "i" }),
 
 					["<C-f>"] = cmp.mapping(function()
 						if luasnip.expand_or_locally_jumpable() then
@@ -146,6 +156,7 @@ return { -- Autocompletion
 							luasnip = "[Snippet]",
 							buffer = "[Buffer]",
 							path = "[Path]",
+							vimtex = "[Tex]",
 						})[entry.source.name]
 						return vim_item
 					end,
@@ -179,5 +190,13 @@ return { -- Autocompletion
 			cmp.abort()
 			print("cmp Buffer: " .. (vim.g.cmp_buffer_enabled and "ON" or "OFF"))
 		end, { desc = "Toggle cmp Buffer source" })
+
+		-- Toggle vimtex source (citations, refs, labels)
+		vim.keymap.set("n", "<leader>av", function()
+			vim.g.cmp_vimtex_enabled = not vim.g.cmp_vimtex_enabled
+			setup_cmp()
+			cmp.abort()
+			print("cmp VimTeX: " .. (vim.g.cmp_vimtex_enabled and "ON" or "OFF"))
+		end, { desc = "Toggle cmp VimTeX source" })
 	end,
 }

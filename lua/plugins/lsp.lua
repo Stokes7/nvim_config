@@ -19,8 +19,8 @@ return {
 			-- Automatically install LSPs and related tools to stdpath for Neovim
 			-- Mason must be loaded before its dependents so we need to set it up here.
 			-- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
-			{ "williamboman/mason.nvim", opts = {} },
-			"williamboman/mason-lspconfig.nvim",
+			{ "mason-org/mason.nvim", opts = {} },
+			"mason-org/mason-lspconfig.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
 
 			-- Useful status updates for LSP.
@@ -78,7 +78,11 @@ return {
 					-- Fuzzy find all the symbols in your current workspace.
 					--  Similar to document symbols, except searches over your entire project.
 					map("gW", require("telescope.builtin").lsp_dynamic_workspace_symbols, "Open Workspace Symbols")
-					map("<leader>cw", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[C]ode [W]orkspace Symbols")
+					map(
+						"<leader>cw",
+						require("telescope.builtin").lsp_dynamic_workspace_symbols,
+						"[C]ode [W]orkspace Symbols"
+					)
 
 					-- Jump to the type of the word under your cursor.
 					--  Useful when you're not sure what type a variable is and you want to see
@@ -183,77 +187,32 @@ return {
 				},
 			})
 
-			-- LSP servers and clients are able to communicate to each other what features they support.
-			--  By default, Neovim doesn't support everything that is in the LSP specification.
-			--  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
-			--  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
-			local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
-			-- Registrar tinymist si lspconfig no lo tiene aún
-			local lspconfig = require("lspconfig")
-			local configs = require("lspconfig.configs")
-			local util = require("lspconfig.util")
-
-			if not configs.tinymist then
-				configs.tinymist = {
-					default_config = {
-						cmd = { "tinymist" },
-						filetypes = { "typst" },
-						root_dir = function(fname)
-							return util.root_pattern("typst.toml", ".git")(fname) or util.path.dirname(fname)
-						end,
-						settings = {},
-					},
-				}
-			end
-
-			-- Enable the following language servers
-			--  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-			--
-			--  Add any additional override configuration in the following tables. Available keys are:
-			--  - cmd (table): Override the default command used to start the server
-			--  - filetypes (table): Override the default list of associated filetypes for the server
-			--  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
-			--  - settings (table): Override the default settings passed when initializing the server.
-			--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+			-- Broadcast nvim-cmp's extra completion capabilities to every server.
+			vim.lsp.config("*", { capabilities = require("cmp_nvim_lsp").default_capabilities() })
 
 			local cuda_home = vim.env.CUDA_HOME
 				or "/cvmfs/software.hpc.rwth.de/Linux/RH9/x86_64/intel/sapphirerapids/software/CUDA/12.8.0"
 			local has_cuda = cuda_home and vim.fn.isdirectory(cuda_home) == 1
 
 			local servers = {
-				-- gopls = {},
-				-- pyright = {},
-				-- rust_analyzer = {},
-				-- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-				--
-				-- Some languages (like typescript) have entire language plugins that can be useful:
-				--    https://github.com/pmizio/typescript-tools.nvim
-				--
-				-- But for many setups, the LSP (`ts_ls`) will work just fine
 				pyright = {},
 
 				clangd = {
-					-- Good defaults; tweak as you like
 					cmd = (function()
 						local c = {
 							"clangd",
-							"--background-index", -- keep an index in the background
-							"--clang-tidy", -- enable clang-tidy diagnostics
+							"--background-index",
+							"--clang-tidy",
 							"--completion-style=detailed",
 							"--header-insertion=iwyu",
 							"--pch-storage=memory",
-							-- If you see encoding warnings, uncomment next line:
-							-- "--offset-encoding=utf-16",
 						}
 						if has_cuda then
 							table.insert(c, "--cuda-path=" .. cuda_home)
 						end
 						return c
 					end)(),
-
 					filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
-
 					settings = {
 						clangd = {
 							fallbackFlags = has_cuda and {
@@ -267,58 +226,37 @@ return {
 				},
 
 				tinymist = {
-					filetypes = { "typst" },
 					settings = {
-						formatterMode = "typstyle", -- formateador integrado recomendado
-						exportPdf = "onSave", -- o "onType" / "never"
-						semanticTokens = "disable", -- opcional
+						formatterMode = "typstyle",
+						exportPdf = "onSave",
+						semanticTokens = "disable",
 					},
 				},
 
 				lua_ls = {
-					-- cmd = { ... },
-					-- filetypes = { ... },
-					-- capabilities = {},
 					settings = {
 						Lua = {
-							completion = {
-								callSnippet = "Replace",
-							},
-							-- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-							-- diagnostics = { disable = { 'missing-fields' } },
+							completion = { callSnippet = "Replace" },
 						},
 					},
 				},
 
 				fortls = {
-					filetypes = { "fortran" },
 					settings = {
 						fortls = {
-							-- opciones típicas (opcionales)
 							incremental_sync = true,
-							-- Puedes activar/ajustar según te guste:
 							diagnostics = true,
-							-- hover_signature = true,
 							autocomplete_name_only = false,
 						},
 					},
 				},
 			}
 
-			-- Ensure the servers and tools above are installed
-			--
-			-- To check the current status of installed tools and/or manually install
-			-- other tools, you can run
-			--    :Mason
-			--
-			-- You can press `g?` for help in this menu.
-			--
-			-- `mason` had to be setup earlier: to configure its options see the
-			-- `dependencies` table for `nvim-lspconfig` above.
-			--
-			-- You can add other tools here that you want Mason to install
-			-- for you, so that they are available from within Neovim.
-			local ensure_installed = vim.tbl_keys(servers or {})
+			for name, config in pairs(servers) do
+				vim.lsp.config(name, config)
+			end
+
+			local ensure_installed = vim.tbl_keys(servers)
 			vim.list_extend(ensure_installed, {
 				"stylua",
 				"shfmt",
@@ -327,22 +265,14 @@ return {
 				"clang-format",
 				"fprettify",
 				"checkmake",
+				"prettierd",
 			})
 			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
 			require("mason-lspconfig").setup({
-				ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-				automatic_installation = false,
-				handlers = {
-					function(server_name)
-						local server = servers[server_name] or {}
-						-- This handles overriding only values explicitly passed
-						-- by the server configuration above. Useful when disabling
-						-- certain features of an LSP (for example, turning off formatting for ts_ls)
-						server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-						require("lspconfig")[server_name].setup(server)
-					end,
-				},
+				ensure_installed = {}, -- mason-tool-installer owns the installs
+				-- stylua is a formatter, none-ls already runs it: no LSP client needed.
+				automatic_enable = { exclude = { "stylua" } },
 			})
 		end,
 	},

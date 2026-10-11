@@ -9,7 +9,7 @@ vim.g.maplocalleader = ","
 -- Leader Key Behavior
 -----------------------------
 -- Disable <Space> default behavior in Normal and Visual modes
-vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
+vim.keymap.set({ "n", "x" }, "<Space>", "<Nop>", { silent = true, desc = "which_key_ignore" })
 
 -----------------------------
 -- Default Mapping Options
@@ -20,13 +20,13 @@ local opts = { noremap = true, silent = true }
 -- File Operations
 -----------------------------
 -- Save file
-vim.keymap.set("n", "<C-s>", "<cmd>w<CR>", opts)
+vim.keymap.set("n", "<C-s>", "<cmd>w<CR>", { desc = "Save file" })
 
 -- Save file without auto-formatting
 vim.keymap.set("n", "<leader>fn", "<cmd>noautocmd w<CR>", { desc = "Save without autocommands" })
 
 -- Quit file
-vim.keymap.set("n", "<C-q>", "<cmd>q<CR>", opts)
+vim.keymap.set("n", "<C-q>", "<cmd>q<CR>", { desc = "Quit window" })
 
 -----------------------------
 -- Editing Shortcuts
@@ -37,16 +37,12 @@ vim.keymap.set("n", "<leader>xX", '"_dd', { desc = "Delete line without yank" })
 -----------------------------
 -- Navigation Enhancements
 -----------------------------
--- Scroll and center cursor
-vim.keymap.set("n", "<C-d>", "<C-d>zz", opts)
-vim.keymap.set("n", "<C-u>", "<C-u>zz", opts)
-
 -- Find next/previous and center
-vim.keymap.set("n", "n", "nzzzv", opts)
-vim.keymap.set("n", "N", "Nzzzv", opts)
+vim.keymap.set("n", "n", "nzzzv", { desc = "Next match (centered)" })
+vim.keymap.set("n", "N", "Nzzzv", { desc = "Previous match (centered)" })
 
 -- Clear search highlight
-vim.keymap.set("n", "<leader>h", "<cmd>nohlsearch<CR>", opts)
+vim.keymap.set("n", "<leader>h", "<cmd>nohlsearch<CR>", { desc = "Clear search highlight" })
 
 -----------------------------
 -- Diagnostics Toggle
@@ -105,10 +101,10 @@ vim.keymap.set(
 -----------------------------
 -- Normal Splits Navigation
 -----------------------------
-vim.keymap.set("n", "<Up>", ":resize -2<CR>", opts)
-vim.keymap.set("n", "<Down>", ":resize +2<CR>", opts)
-vim.keymap.set("n", "<Left>", ":vertical resize -2<CR>", opts)
-vim.keymap.set("n", "<Right>", ":vertical resize +2<CR>", opts)
+vim.keymap.set("n", "<Up>", "<cmd>resize -2<CR>", { desc = "Shrink window height" })
+vim.keymap.set("n", "<Down>", "<cmd>resize +2<CR>", { desc = "Grow window height" })
+vim.keymap.set("n", "<Left>", "<cmd>vertical resize -2<CR>", { desc = "Shrink window width" })
+vim.keymap.set("n", "<Right>", "<cmd>vertical resize +2<CR>", { desc = "Grow window width" })
 
 -- vim.keymap.set("n", "<C-k>", ":wincmd k<CR>", opts)
 -- vim.keymap.set("n", "<C-j>", ":wincmd j<CR>", opts)
@@ -146,10 +142,10 @@ vim.keymap.set("n", "<leader>wc", "<cmd>close<CR>", { desc = "Close window" })
 -----------------------------
 -- Tab Management
 -----------------------------
-vim.keymap.set("n", "<leader>to", ":tabnew<CR>", opts)
-vim.keymap.set("n", "<leader>tx", ":tabclose<CR>", opts)
-vim.keymap.set("n", "<leader>tP", ":tabp<CR>", opts)
-vim.keymap.set("n", "<leader>tN", ":tabn<CR>", opts)
+vim.keymap.set("n", "<leader>to", "<cmd>tabnew<CR>", { desc = "New tab" })
+vim.keymap.set("n", "<leader>tx", "<cmd>tabclose<CR>", { desc = "Close tab" })
+vim.keymap.set("n", "<leader>tP", "<cmd>tabprevious<CR>", { desc = "Previous tab" })
+vim.keymap.set("n", "<leader>tN", "<cmd>tabnext<CR>", { desc = "Next tab" })
 
 -----------------------------
 -- Toggle Line Wrapping
@@ -159,14 +155,33 @@ vim.keymap.set("n", "<leader>uw", function()
 	vim.notify("Wrap " .. (vim.wo.wrap and "ON" or "OFF"))
 end, { desc = "Toggle line wrap" })
 
--- Smart movement when wrap is enabled
-vim.keymap.set("n", "j", function()
-	return vim.v.count == 0 and vim.wo.wrap and "gj" or "j"
-end, { expr = true, silent = true })
+-- Smart movement when wrap is enabled: move by visual line, not logical line.
+-- With a count (3j) we keep logical lines so relativenumber jumps stay correct.
+local function wrapped(visual_key, plain_key)
+	return function()
+		return (vim.v.count == 0 and vim.wo.wrap) and visual_key or plain_key
+	end
+end
 
-vim.keymap.set("n", "k", function()
-	return vim.v.count == 0 and vim.wo.wrap and "gk" or "k"
-end, { expr = true, silent = true })
+for _, m in ipairs({
+	{ "j", "gj" },
+	{ "k", "gk" },
+}) do
+	vim.keymap.set({ "n", "x" }, m[1], wrapped(m[2], m[1]), { expr = true, silent = true })
+end
+
+-- Start/end of the *visual* line when wrapping
+for _, m in ipairs({
+	{ "0", "g0" },
+	{ "^", "g^" },
+	{ "$", "g$" },
+}) do
+	vim.keymap.set({ "n", "x" }, m[1], wrapped(m[2], m[1]), { expr = true, silent = true })
+end
+
+-- Arrow keys in insert mode also follow visual lines
+vim.keymap.set("i", "<Down>", "<Cmd>normal! gj<CR>", { silent = true })
+vim.keymap.set("i", "<Up>", "<Cmd>normal! gk<CR>", { silent = true })
 
 -----------------------------
 -- Visual Mode Improvements
@@ -201,7 +216,6 @@ local allowed = {
 	text = true,
 	gitcommit = true,
 	tex = true,
-	latex = true,
 	typst = true,
 }
 
@@ -235,8 +249,16 @@ vim.api.nvim_create_autocmd("FileType", {
 			"n",
 			"<leader>mp",
 			"<cmd>TypstPreviewToggle<CR>",
-			{ buffer = buf, desc = "Toggle Typst Preview" }
+			{ buffer = buf, desc = "Toggle Typst Live Preview (Browser)" }
 		)
+		vim.keymap.set("n", "<leader>mP", function()
+			local pdf = vim.fn.expand("%:p:r") .. ".pdf"
+			if vim.fn.filereadable(pdf) == 1 then
+				vim.cmd("edit " .. vim.fn.fnameescape(pdf))
+			else
+				vim.notify("Compiled PDF not found: " .. vim.fn.fnamemodify(pdf, ":t"), vim.log.levels.WARN)
+			end
+		end, { buffer = buf, desc = "Open compiled PDF in Zen Browser" })
 		vim.keymap.set("n", "<leader>ms", "<cmd>TypstPreviewStop<CR>", { buffer = buf, desc = "Stop Typst Preview" })
 		vim.keymap.set(
 			"n",
@@ -260,23 +282,41 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 -----------------------------
---- Leetcode
------------------------------
-vim.api.nvim_create_user_command("LeetMMix", function()
-	vim.cmd("Leet list")
-	vim.defer_fn(function()
-		vim.fn.feedkeys("medium array matrix simulation hash unsolved", "t")
-	end, 300)
-end, {})
-
------------------------------
 -- VimTeX Keymaps (LaTeX only)
 -----------------------------
--- LeetCode keymaps
-vim.keymap.set("n", "<leader>ll", ":Leet<CR>", { desc = "LeetCode menu" })
-vim.keymap.set("n", "<leader>lt", ":Leet test<CR>", { desc = "LeetCode test" })
-vim.keymap.set("n", "<leader>lr", ":Leet run<CR>", { desc = "LeetCode run examples" })
-vim.keymap.set("n", "<leader>ls", ":Leet submit<CR>", { desc = "LeetCode submit" })
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "tex",
+	callback = function(args)
+		local buf = args.buf
+
+		-- Compile (toggle continuous mode)
+		vim.keymap.set("n", "<leader>ll", "<cmd>VimtexCompile<CR>", { buffer = buf, desc = "Compile (continuous)" })
+
+		-- View PDF in Zathura (forward search)
+		vim.keymap.set("n", "<leader>lv", "<cmd>VimtexView<CR>", { buffer = buf, desc = "View PDF" })
+
+		-- Stop compilation
+		vim.keymap.set("n", "<leader>lk", "<cmd>VimtexStop<CR>", { buffer = buf, desc = "Stop compiler" })
+
+		-- Show errors/warnings
+		vim.keymap.set("n", "<leader>le", "<cmd>VimtexErrors<CR>", { buffer = buf, desc = "Show errors" })
+
+		-- Table of contents
+		vim.keymap.set("n", "<leader>lt", "<cmd>VimtexTocToggle<CR>", { buffer = buf, desc = "Table of contents" })
+
+		-- Clean auxiliary files
+		vim.keymap.set("n", "<leader>lc", "<cmd>VimtexClean<CR>", { buffer = buf, desc = "Clean aux files" })
+
+		-- Clean all (including PDF)
+		vim.keymap.set("n", "<leader>lC", "<cmd>VimtexClean!<CR>", { buffer = buf, desc = "Clean all (+ PDF)" })
+
+		-- Project info
+		vim.keymap.set("n", "<leader>li", "<cmd>VimtexInfo<CR>", { buffer = buf, desc = "Project info" })
+
+		-- Status
+		vim.keymap.set("n", "<leader>ls", "<cmd>VimtexStatus<CR>", { buffer = buf, desc = "Compiler status" })
+	end,
+})
 
 -----------------------------
 -- CSV viewer
@@ -339,7 +379,12 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.keymap.set("n", "<leader>jc", "<cmd>JupynvimClearOutputs<CR>", { buffer = buf, desc = "Clear all outputs" })
 
 		-- Clear output from current cell
-		vim.keymap.set("n", "<leader>jC", "<cmd>JupynvimClearCellOutput<CR>", { buffer = buf, desc = "Clear current cell output" })
+		vim.keymap.set(
+			"n",
+			"<leader>jC",
+			"<cmd>JupynvimClearCellOutput<CR>",
+			{ buffer = buf, desc = "Clear current cell output" }
+		)
 
 		-- Run current cell
 		vim.keymap.set("n", "<S-Enter>", "<cmd>JupynvimRunCell<CR>", { buffer = buf, desc = "Run cell" })

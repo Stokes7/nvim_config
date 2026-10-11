@@ -76,9 +76,7 @@ end
 return {
 	"karb94/neoscroll.nvim",
 	opts = {
-		mappings = { -- Keys to be mapped to their corresponding default scrolling animation
-			"<C-u>",
-			"<C-d>",
+		mappings = { -- <C-u>/<C-d> are bound below so they can recenter afterwards
 			"<C-b>",
 			"<C-f>",
 			"<C-y>",
@@ -94,7 +92,12 @@ return {
 		duration_multiplier = 0.7, -- Global duration multiplier
 		easing = "linear", -- Default easing function
 		pre_hook = suspend_images, -- Clear kitty images before the animation
-		post_hook = resume_images, -- Re-render them at the new position
+		post_hook = function(info)
+			if info == "center" then
+				vim.cmd("normal! zz")
+			end
+			resume_images()
+		end,
 		performance_mode = false, -- Disable "Performance Mode" on all buffers.
 		ignored_events = { -- Events ignored while scrolling
 			"WinScrolled",
@@ -102,7 +105,15 @@ return {
 		},
 	},
 	config = function(_, opts)
-		require("neoscroll").setup(opts)
+		local neoscroll = require("neoscroll")
+		neoscroll.setup(opts)
+
+		vim.keymap.set("n", "<C-d>", function()
+			neoscroll.ctrl_d({ info = "center" })
+		end, { silent = true, desc = "Scroll down and center" })
+		vim.keymap.set("n", "<C-u>", function()
+			neoscroll.ctrl_u({ info = "center" })
+		end, { silent = true, desc = "Scroll up and center" })
 
 		-- Safety net: if an animation is interrupted (<C-c>, a mapping that
 		-- bails early) post_hook may never fire and images would stay off.

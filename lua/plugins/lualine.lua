@@ -38,15 +38,6 @@ return {
 			},
 		}
 
-		-- Import color theme based on environment variable NVIM_THEME
-		local env_var_nvim_theme = os.getenv("NVIM_THEME") or "nord"
-
-		-- Define a table of themes
-		local themes = {
-			onedark = onedark_theme,
-			nord = "nord",
-		}
-
 		local mode = {
 			"mode",
 			fmt = function(str)
@@ -87,7 +78,7 @@ return {
 			options = {
 				globalstatus = true,
 				icons_enabled = true,
-				theme = themes.onedark, --themes[env_var_nvim_theme], -- Set theme based on environment variable
+				theme = onedark_theme,
 				-- Some useful glyphs:
 				-- https://www.nerdfonts.com/cheat-sheet
 				--        
