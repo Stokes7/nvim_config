@@ -1,6 +1,6 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
-	branch = "main",
+	branch = "master",
 	event = { "BufReadPost", "BufNewFile" },
 	build = ":TSUpdate",
 	main = "nvim-treesitter",
@@ -9,6 +9,7 @@ return {
 		-- Los parsers se instalan via :TSInstall o programáticamente abajo
 	},
 	config = function()
+		require("nvim-treesitter.install").prefer_git = true
 		require("nvim-treesitter.configs").setup({
 			ensure_installed = {
 				"bash",

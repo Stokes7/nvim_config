@@ -42,6 +42,15 @@ return {
 		vim.g.molten_image_provider = "image.nvim"
 		vim.g.molten_image_location = "virt"
 
+		-- IMPORTANT: defaults to true. When on, every image output is *also*
+		-- opened with python's Image.show() (system viewer). Over SSH that
+		-- either hangs the kernel or spawns junk processes on the cluster.
+		vim.g.molten_auto_image_popup = false
+
+		-- Poll the kernel a bit faster so outputs settle quickly instead of
+		-- redrawing in several visible steps.
+		vim.g.molten_tick_rate = 200
+
 		-- Open images in a split on the right
 		-- vim.g.molten_split_direction = "right"
 		-- vim.g.molten_split_size = 40
@@ -177,6 +186,29 @@ return {
 			vim.cmd("MoltenRestart!")
 		end
 
+		-- Escape hatch: nukes every kitty graphics placement and forces a full
+		-- terminal redraw, then re-renders whatever should still be visible.
+		-- Use this when an image gets stuck instead of restarting nvim.
+		local function redraw_images()
+			local ok, image = pcall(require, "image")
+			if ok then
+				pcall(image.clear)
+				pcall(image.disable)
+			end
+			-- Belt and braces: ask kitty itself to delete every placement and
+			-- free the image data, in case one outlived image.nvim's
+			-- bookkeeping. Reuses image.nvim's own tty handle.
+			pcall(function()
+				require("image.backends.kitty.helpers").write("\27_Ga=d,d=A\27\\")
+			end)
+			vim.cmd("mode") -- full screen repaint
+			vim.schedule(function()
+				if ok then
+					pcall(image.enable)
+				end
+			end)
+		end
+
 		vim.api.nvim_create_autocmd("FileType", {
 			pattern = "python",
 			callback = function(args)
@@ -187,6 +219,7 @@ return {
 				vim.keymap.set("n", "<leader>jr", "<cmd>MoltenReevaluateCell<CR>", { buffer = buf, desc = "Re-run Active Cell" })
 				vim.keymap.set("n", "<leader>jo", "<cmd>noautocmd MoltenEnterOutput<CR>", { buffer = buf, desc = "Open Output" })
 				vim.keymap.set("n", "<leader>jh", "<cmd>MoltenHideOutput<CR>", { buffer = buf, desc = "Hide Output" })
+				vim.keymap.set("n", "<leader>js", "<cmd>MoltenShowOutput<CR>", { buffer = buf, desc = "Show Output" })
 				vim.keymap.set("n", "<leader>jx", "<cmd>MoltenRestart<CR>", { buffer = buf, desc = "Restart Kernel" })
 				vim.keymap.set("n", "<leader>jk", "<cmd>MoltenInterrupt<CR>", { buffer = buf, desc = "Interrupt Kernel" })
 
@@ -203,6 +236,7 @@ return {
 				vim.keymap.set("n", "<leader>jc", clear_current_cell_output, { buffer = buf, desc = "Clear Current Cell Output" })
 				vim.keymap.set("n", "<leader>jC", clear_all_cells_outputs, { buffer = buf, desc = "Clear All Cells Outputs" })
 				vim.keymap.set("n", "<leader>jR", restart_and_clear_all, { buffer = buf, desc = "Restart Kernel and Clear Outputs" })
+				vim.keymap.set("n", "<leader>jz", redraw_images, { buffer = buf, desc = "Redraw / Unstick Images" })
 			end,
 		})
 	end,

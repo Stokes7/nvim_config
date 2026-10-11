@@ -1,3 +1,32 @@
+-- Kitty graphics vs. layout changes.
+--
+-- Opening/closing the tree shifts every window sideways. Kitty still has the
+-- image painted at the old coordinates -- on top of the tree's cells -- and
+-- when it finally moves, nvim's damage tracking doesn't know those cells were
+-- clobbered, so it never resends them. Result: garbage characters inside the
+-- neo-tree panel that survive until you close nvim.
+--
+-- image.nvim's window_overlap_clear only masks against *floating* windows
+-- (see utils/window.lua: `if not other_window.is_floating then goto ...`), so a
+-- left split like this one is not covered. Do it by hand: drop the images
+-- across the layout change, then force a full repaint.
+local function redraw_safely(fn)
+	local ok, image = pcall(require, "image")
+	local had_images = ok and image.is_enabled()
+	if had_images then
+		pcall(image.disable)
+	end
+
+	fn()
+
+	vim.schedule(function()
+		vim.cmd("mode") -- full repaint; :redraw would trust the damage tracking
+		if had_images then
+			pcall(image.enable)
+		end
+	end)
+end
+
 return {
 	"nvim-neo-tree/neo-tree.nvim",
 	cmd = "Neotree",
@@ -5,25 +34,53 @@ return {
 		{
 			"<leader>e",
 			function()
-				vim.cmd("Neotree toggle position=left")
-				vim.schedule(function()
-					for _, win in ipairs(vim.api.nvim_list_wins()) do
-						local buf = vim.api.nvim_win_get_buf(win)
-						if vim.bo[buf].filetype == "alpha" then
-							vim.api.nvim_set_current_win(win)
-							pcall(vim.cmd.AlphaRedraw)
-							break
+				redraw_safely(function()
+					vim.cmd("Neotree toggle position=left")
+					vim.schedule(function()
+						for _, win in ipairs(vim.api.nvim_list_wins()) do
+							local buf = vim.api.nvim_win_get_buf(win)
+							if vim.bo[buf].filetype == "alpha" then
+								vim.api.nvim_set_current_win(win)
+								pcall(vim.cmd.AlphaRedraw)
+								break
+							end
 						end
-					end
-					vim.cmd("redraw")
+					end)
 				end)
 			end,
 			silent = true,
 			desc = "Explorer",
 		},
-		{ "<leader>wf", "<cmd>Neotree toggle float<CR>", silent = true, desc = "Floating explorer" },
-		{ "<leader>ngs", "<cmd>Neotree float git_status<CR>", silent = true, desc = "Neo-tree git status" },
-		{ "\\", "<cmd>Neotree reveal<CR>", silent = true, desc = "Reveal current file" },
+		{
+			"<leader>wf",
+			function()
+				redraw_safely(function()
+					vim.cmd("Neotree toggle float")
+				end)
+			end,
+			silent = true,
+			desc = "Floating explorer",
+		},
+		{
+			"<leader>ngs",
+			function()
+				redraw_safely(function()
+					vim.cmd("Neotree float git_status")
+				end)
+			end,
+			silent = true,
+			desc = "Neo-tree git status",
+		},
+		{
+			"\\",
+			function()
+				redraw_safely(function()
+					vim.cmd("Neotree reveal")
+				end)
+			end,
+			silent = true,
+			desc = "Reveal current file",
+		},
 	},
 	branch = "v3.x",
 	dependencies = {
@@ -325,6 +382,26 @@ return {
 					},
 				},
 			},
+		})
+
+		-- The tree can also be closed from inside it (`q`, `<esc>`), which never
+		-- goes through redraw_safely. Force a full repaint on the way out so any
+		-- cells kitty painted over come back.
+		vim.api.nvim_create_autocmd("WinClosed", {
+			group = vim.api.nvim_create_augroup("neotree_image_repaint", { clear = true }),
+			callback = function(args)
+				local win = tonumber(args.match)
+				if not win then
+					return
+				end
+				local ok, buf = pcall(vim.api.nvim_win_get_buf, win)
+				if not ok or vim.bo[buf].filetype ~= "neo-tree" then
+					return
+				end
+				vim.schedule(function()
+					vim.cmd("mode")
+				end)
+			end,
 		})
 	end,
 }

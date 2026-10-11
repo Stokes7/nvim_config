@@ -39,6 +39,8 @@ return {
 				{ "<leader>a", group = "autocomplete / AI", icon = { icon = " ", color = "purple" } },
 				{ "<leader>c", group = "code / lsp", icon = { icon = " ", color = "azure" } },
 				{ "<leader>o", group = "obsidian", icon = { icon = "󱋩 ", color = "purple" } },
+				-- Individual mappings that deserve their own label/icon
+				{ "<leader>jz", desc = "Redraw / unstick images", icon = { icon = "󰋩 ", color = "yellow" } },
 			})
 		end,
 	},
