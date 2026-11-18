@@ -26,7 +26,25 @@ vim.keymap.set("n", "<C-s>", "<cmd>w<CR>", { desc = "Save file" })
 vim.keymap.set("n", "<leader>fn", "<cmd>noautocmd w<CR>", { desc = "Save without autocommands" })
 
 -- Quit file
-vim.keymap.set("n", "<C-q>", "<cmd>q<CR>", { desc = "Quit window" })
+-- In a git diff (fugitive), close the commit side and turn diff off; otherwise :q
+vim.keymap.set("n", "<C-q>", function()
+	local wins = vim.api.nvim_tabpage_list_wins(0)
+	if vim.wo.diff and #wins > 1 then
+		local closed = false
+		for _, w in ipairs(wins) do
+			if vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(w)):match("^fugitive://") then
+				vim.api.nvim_win_close(w, true)
+				closed = true
+			end
+		end
+		if closed then
+			vim.cmd("diffoff!")
+			vim.wo.cursorline = false
+			return
+		end
+	end
+	vim.cmd("q")
+end, { desc = "Quit window (closes git diff first)" })
 
 -----------------------------
 -- Editing Shortcuts
@@ -79,6 +97,24 @@ vim.keymap.set(
 	":Gdiffsplit origin/main:%<CR>",
 	{ noremap = true, silent = true, desc = "Diff vs origin/main" }
 )
+
+-- In diff mode show the cursor line in both windows (cursorbind keeps them in sync)
+vim.api.nvim_create_autocmd("DiffUpdated", {
+	callback = function()
+		for _, w in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+			vim.wo[w].cursorline = vim.wo[w].diff
+		end
+	end,
+})
+
+-- Commit side of a diff: red like git, and hidden from the bufferline
+vim.api.nvim_create_autocmd("BufWinEnter", {
+	pattern = "fugitive://*",
+	callback = function()
+		vim.bo.buflisted = false
+		vim.wo.winhighlight = "DiffAdd:GitDiffOldLine,DiffChange:GitDiffOldLine,DiffText:GitDiffOldText"
+	end,
+})
 
 -----------------------------
 -- Smart-Splits Navigation
@@ -476,9 +512,12 @@ end, { desc = "CSV: enable and choose header line" })
 -- Jupynvim (Jupyter Notebooks)
 -----------------------------
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = "ipynb",
+	pattern = "python", -- jupynvim sets the kernel language as filetype, not "ipynb"
 	callback = function(args)
 		local buf = args.buf
+		if not vim.api.nvim_buf_get_name(buf):match("%.ipynb$") then
+			return
+		end
 
 		-- Run cell under cursor
 		vim.keymap.set("n", "<leader>jj", "<cmd>JupynvimRunCell<CR>", { buffer = buf, desc = "Run cell under cursor" })
@@ -502,8 +541,6 @@ vim.api.nvim_create_autocmd("FileType", {
 			"<cmd>JupynvimClearCellOutput<CR>",
 			{ buffer = buf, desc = "Clear current cell output" }
 		)
-
-		-- Run current cell
-		vim.keymap.set("n", "<S-Enter>", "<cmd>JupynvimRunCell<CR>", { buffer = buf, desc = "Run cell" })
+		-- <S-Enter> is jupynvim's own default: run cell and go to the next one
 	end,
 })

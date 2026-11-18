@@ -213,6 +213,10 @@ return {
 			pattern = "python",
 			callback = function(args)
 				local buf = args.buf
+				-- .ipynb buffers are python too, but belong to jupynvim
+				if vim.api.nvim_buf_get_name(buf):match("%.ipynb$") then
+					return
+				end
 
 				vim.keymap.set("n", "<leader>ji", molten_init, { buffer = buf, desc = "Molten Init Kernel" })
 				vim.keymap.set("n", "<leader>jl", "<cmd>MoltenEvaluateLine<CR>", { buffer = buf, desc = "Run Line" })

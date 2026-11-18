@@ -92,6 +92,24 @@ return {
 				lualine_b = { "branch" },
 				lualine_c = { filename },
 				lualine_x = {
+					{
+						-- Jupyter kernel of the open notebook (set in plugins/jupynvim.lua)
+						function()
+							local nb = require("jupynvim.notebook").get(vim.api.nvim_get_current_buf())
+							if nb and nb.kernel_error then
+								return "󱗕 kernel: error"
+							elseif nb and nb.kernel_starting then
+								return "󱗕 starting…"
+							elseif nb and nb.kernel_started then
+								return "󱗕 " .. (vim.b.jupynvim_kernel or "?")
+							end
+							return "󱗕 no kernel"
+						end,
+						cond = function()
+							return vim.api.nvim_buf_get_name(0):match("%.ipynb$") ~= nil
+						end,
+						color = { fg = colors.yellow },
+					},
 					diagnostics,
 					diff,
 					{ "encoding", cond = hide_in_width },

@@ -48,7 +48,9 @@ return {
 		-- =========================================
 		-- Performance / behavior
 		-- =========================================
-		hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp" },
+		-- Opened image files are handled in config() below so they can fill
+		-- the window instead of obeying the 100x20 Molten caps.
+		hijack_file_patterns = {},
 
 		-- =========================================
 		-- Integrations (important for Molten)
@@ -62,4 +64,44 @@ return {
 			},
 		},
 	},
+
+	config = function(_, opts)
+		local image = require("image")
+		image.setup(opts)
+
+		-- Fit an opened image file to its window (full width unless it's too tall)
+		local function fit(win, buf)
+			-- minus the gutter (image.nvim draws after it) and 1 cell for its ceil() rounding
+			local w = vim.api.nvim_win_get_width(win) - vim.fn.getwininfo(win)[1].textoff - 1
+			local h = vim.api.nvim_win_get_height(win) - 1
+			local img = image.hijack_buffer(vim.api.nvim_buf_get_name(buf), win, buf, { width = w, height = h })
+			if not img then
+				return
+			end
+			img.ignore_global_max_size = true
+			img.geometry.width, img.geometry.height = w, h
+			img:render()
+		end
+
+		vim.api.nvim_create_autocmd({ "BufWinEnter", "WinNew", "TabEnter" }, {
+			pattern = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp" },
+			callback = function(ev)
+				if image.is_enabled() then
+					fit(vim.api.nvim_get_current_win(), ev.buf)
+				end
+			end,
+		})
+
+		-- Refit when the window is resized
+		vim.api.nvim_create_autocmd("WinResized", {
+			callback = function()
+				for _, win in ipairs(vim.v.event.windows) do
+					local buf = vim.api.nvim_win_get_buf(win)
+					if vim.bo[buf].filetype == "image_nvim" then
+						fit(win, buf)
+					end
+				end
+			end,
+		})
+	end,
 }

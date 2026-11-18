@@ -19,7 +19,9 @@ function M.is_real_file_buffer(buf)
 		return false
 	end
 
-	if vim.bo[buf].buftype ~= "" then
+	-- "acwrite" = file saved by a plugin (e.g. jupynvim notebooks), still a real file
+	local bt = vim.bo[buf].buftype
+	if bt ~= "" and bt ~= "acwrite" then
 		return false
 	end
 

@@ -40,6 +40,16 @@ return {
 				fg = "#cba6f7",
 				bold = true,
 			})
+
+			-- Git-style diff: green = your version, red = commit version (see keymaps.lua)
+			vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#1e3a29" })
+			vim.api.nvim_set_hl(0, "DiffChange", { bg = "#1e3a29" })
+			vim.api.nvim_set_hl(0, "DiffText", { bg = "#2f6b43", bold = true })
+			vim.api.nvim_set_hl(0, "DiffDelete", { fg = "#4b5263" })
+			vim.api.nvim_set_hl(0, "GitDiffOldLine", { bg = "#3f1e22" })
+			vim.api.nvim_set_hl(0, "GitDiffOldText", { bg = "#7a2b33", bold = true })
+			-- Cursor line (only on in diff windows): underline stays visible over diff colors
+			vim.api.nvim_set_hl(0, "CursorLine", { underline = true, sp = "#61afef" })
 		end
 
 		set_strong_visual()

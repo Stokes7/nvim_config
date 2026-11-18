@@ -89,7 +89,7 @@ require("lazy").setup({
 	require("plugins.csvview"),
 	require("plugins.image"),
 	require("plugins.neoscroll"),
-	-- require("plugins.jupynvim"),
+	require("plugins.jupynvim"),
 	--require("plugins.smart-splits"),
 	require("plugins.vimtex"),
 	require("plugins.cmp-vimtex"),
