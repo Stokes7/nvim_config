@@ -207,9 +207,6 @@ return {
 							"--header-insertion=iwyu",
 							"--pch-storage=memory",
 						}
-						if has_cuda then
-							table.insert(c, "--cuda-path=" .. cuda_home)
-						end
 						return c
 					end)(),
 					filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
@@ -218,6 +215,7 @@ return {
 							fallbackFlags = has_cuda and {
 								"-std=c++20",
 								"-I" .. cuda_home .. "/include",
+								"--cuda-path=" .. cuda_home,
 							} or {
 								"-std=c++20",
 							},

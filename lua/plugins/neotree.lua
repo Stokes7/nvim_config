@@ -243,6 +243,11 @@ return {
 					["d"] = "delete",
 					["r"] = "rename",
 					["y"] = "copy_to_clipboard",
+					["Y"] = function(state) -- copy the file name without extension to the system clipboard
+						local name = state.tree:get_node().name:gsub("%.%w+$", "")
+						vim.fn.setreg("+", name)
+						vim.notify("Copied: " .. name)
+					end,
 					["x"] = "cut_to_clipboard",
 					["p"] = "paste_from_clipboard",
 					["c"] = "copy", -- takes text input for destination, also accepts the optional config.show_path option like "add":
